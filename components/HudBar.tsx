@@ -147,7 +147,14 @@ export default function HudBar({
       }}
     >
       {/* Left controls: pet selector + exit button */}
-      <div style={{ display: "flex", gap: "8px", pointerEvents: "auto", flexWrap: "wrap" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "8px",
+          pointerEvents: "auto",
+          flexWrap: "wrap",
+        }}
+      >
         <div ref={dropdownRef} style={{ position: "relative" }}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -178,9 +185,15 @@ export default function HudBar({
             }}
           >
             {isCat ? (
-              <CatFaceIcon type={petBreed as CatType} size={isMobile ? 16 : 20} />
+              <CatFaceIcon
+                type={petBreed as CatType}
+                size={isMobile ? 16 : 20}
+              />
             ) : (
-              <DogFaceIcon type={petBreed as DogType} size={isMobile ? 16 : 20} />
+              <DogFaceIcon
+                type={petBreed as DogType}
+                size={isMobile ? 16 : 20}
+              />
             )}
             {!isMobile && <span>{petName}</span>}
             <span style={{ fontSize: "12px" }}>▼</span>
@@ -354,15 +367,15 @@ export default function HudBar({
             justifyContent: "flex-end",
           }}
         >
-          <StatCard 
-            label="Days" 
-            value={daysTogether} 
+          <StatCard
+            label="Days"
+            value={daysTogether}
             minWidth={isMobile ? "50px" : "70px"}
             compact={isMobile}
           />
-          <StatCard 
-            label="Pats" 
-            value={totalPats} 
+          <StatCard
+            label="Pats"
+            value={totalPats}
             minWidth={isMobile ? "50px" : "70px"}
             compact={isMobile}
           />
@@ -376,7 +389,9 @@ export default function HudBar({
         </div>
 
         {/* Scene-Specific Stats - Compact on mobile */}
-        {(currentScene === "feed" || currentScene === "play" || currentScene === "bath") && (
+        {(currentScene === "feed" ||
+          currentScene === "play" ||
+          currentScene === "bath") && (
           <div
             style={{
               display: "flex",
@@ -387,7 +402,12 @@ export default function HudBar({
           >
             {currentScene === "feed" && (
               <>
-                <StatCard label="Feeds" value={totalFeeds} minWidth={isMobile ? "45px" : "65px"} compact={isMobile} />
+                <StatCard
+                  label="Feeds"
+                  value={totalFeeds}
+                  minWidth={isMobile ? "45px" : "65px"}
+                  compact={isMobile}
+                />
                 {lastFed && (
                   <StatCard
                     label="Last Fed"
@@ -402,7 +422,12 @@ export default function HudBar({
 
             {currentScene === "play" && (
               <>
-                <StatCard label="Plays" value={totalPlays} minWidth={isMobile ? "45px" : "65px"} compact={isMobile} />
+                <StatCard
+                  label="Plays"
+                  value={totalPlays}
+                  minWidth={isMobile ? "45px" : "65px"}
+                  compact={isMobile}
+                />
                 {lastPlayed && (
                   <StatCard
                     label="Last Play"
@@ -417,7 +442,12 @@ export default function HudBar({
 
             {currentScene === "bath" && (
               <>
-                <StatCard label="Baths" value={totalBaths} minWidth={isMobile ? "45px" : "65px"} compact={isMobile} />
+                <StatCard
+                  label="Baths"
+                  value={totalBaths}
+                  minWidth={isMobile ? "45px" : "65px"}
+                  compact={isMobile}
+                />
                 {lastBathed && (
                   <StatCard
                     label="Last Bath"
@@ -482,10 +512,21 @@ function StatCard({
         ...style,
       }}
     >
-      <span style={{ fontSize: compact ? "7px" : "9px", opacity: 0.75, display: "block" }}>
+      <span
+        style={{
+          fontSize: compact ? "7px" : "9px",
+          opacity: 0.75,
+          display: "block",
+        }}
+      >
         {label}
       </span>
-      <span style={{ fontSize: fontSize || compact ? "12px" : "14px", fontWeight: 700 }}>
+      <span
+        style={{
+          fontSize: fontSize || compact ? "12px" : "14px",
+          fontWeight: 700,
+        }}
+      >
         {value}
       </span>
     </div>
