@@ -31,6 +31,19 @@ interface HudBarProps {
   selectedPetId: string | null;
   onPetChange: (petId: string) => void;
   onAddPet: () => void;
+  // New stat fields
+  happiness?: number;
+  hunger?: number;
+  energy?: number;
+  cleanliness?: number;
+  health?: number;
+  totalFeeds?: number;
+  totalPlays?: number;
+  totalBaths?: number;
+  lastFed?: string;
+  lastPlayed?: string;
+  lastBathed?: string;
+  currentScene?: string;
 }
 
 export default function HudBar({
@@ -44,6 +57,18 @@ export default function HudBar({
   selectedPetId,
   onPetChange,
   onAddPet,
+  happiness = 75,
+  hunger = 50,
+  energy = 80,
+  cleanliness = 70,
+  health = 90,
+  totalFeeds = 0,
+  totalPlays = 0,
+  totalBaths = 0,
+  lastFed,
+  lastPlayed,
+  lastBathed,
+  currentScene = "room",
 }: HudBarProps) {
   // Deduplicate pets by id
   const uniquePets = Array.from(
@@ -77,9 +102,6 @@ export default function HudBar({
   }, [dropdownOpen]);
 
   const isCat = petKind === "cat";
-  const moodLabel = petMood
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (ch) => ch.toUpperCase());
   const moodEmoji =
     {
       ecstatic: "🤩",
@@ -298,65 +320,215 @@ export default function HudBar({
       <div
         style={{
           display: "flex",
-          gap: "10px",
+          flexDirection: "column",
+          gap: "12px",
           fontSize: "13px",
           fontWeight: "600",
           color: "#5a3a1c",
           pointerEvents: "auto",
         }}
       >
+        {/* Primary Stats Row - Responsive */}
         <div
           style={{
-            backgroundColor: "rgba(255, 255, 255, 0.92)",
-            border: "2px solid rgba(101, 50, 15, 0.22)",
-            borderRadius: "10px",
-            padding: "8px 10px",
-            minWidth: "84px",
-            textAlign: "right",
+            display: "flex",
+            gap: "8px",
+            flexWrap: "wrap",
+            justifyContent: "flex-end",
           }}
         >
-          <span style={{ fontSize: "11px", opacity: 0.75, display: "block" }}>
-            Days Together
-          </span>
-          <span style={{ fontSize: "16px", fontWeight: 700 }}>
-            {daysTogether}
-          </span>
+          <StatCard label="Days" value={daysTogether} minWidth="70px" />
+          <StatCard label="Pats" value={totalPats} minWidth="70px" />
+          <StatCard
+            label="Mood"
+            value={`${moodEmoji}`}
+            minWidth="70px"
+            style={{ fontSize: "14px" }}
+          />
         </div>
 
+        {/* Scene-Specific Stats */}
         <div
           style={{
-            backgroundColor: "rgba(255, 255, 255, 0.92)",
-            border: "2px solid rgba(101, 50, 15, 0.22)",
-            borderRadius: "10px",
-            padding: "8px 10px",
-            minWidth: "84px",
-            textAlign: "right",
+            display: "flex",
+            gap: "8px",
+            flexWrap: "wrap",
+            justifyContent: "flex-end",
           }}
         >
-          <span style={{ fontSize: "11px", opacity: 0.75, display: "block" }}>
-            Total Pats
-          </span>
-          <span style={{ fontSize: "16px", fontWeight: 700 }}>{totalPats}</span>
+          {currentScene === "feed" && (
+            <>
+              <StatCard label="Feeds" value={totalFeeds} minWidth="65px" />
+              {lastFed && (
+                <StatCard
+                  label="Last Fed"
+                  value={formatTimeAgo(lastFed)}
+                  minWidth="90px"
+                  fontSize="10px"
+                />
+              )}
+            </>
+          )}
+
+          {currentScene === "play" && (
+            <>
+              <StatCard label="Plays" value={totalPlays} minWidth="65px" />
+              {lastPlayed && (
+                <StatCard
+                  label="Last Play"
+                  value={formatTimeAgo(lastPlayed)}
+                  minWidth="90px"
+                  fontSize="10px"
+                />
+              )}
+            </>
+          )}
+
+          {currentScene === "bath" && (
+            <>
+              <StatCard label="Baths" value={totalBaths} minWidth="65px" />
+              {lastBathed && (
+                <StatCard
+                  label="Last Bath"
+                  value={formatTimeAgo(lastBathed)}
+                  minWidth="90px"
+                  fontSize="10px"
+                />
+              )}
+            </>
+          )}
         </div>
 
+        {/* Pet Health/Status Stats - Mobile Friendly */}
         <div
           style={{
-            backgroundColor: "rgba(255, 255, 255, 0.92)",
-            border: "2px solid rgba(101, 50, 15, 0.22)",
-            borderRadius: "10px",
-            padding: "8px 10px",
-            minWidth: "110px",
-            textAlign: "right",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(60px, 1fr))",
+            gap: "6px",
+            fontSize: "11px",
           }}
         >
-          <span style={{ fontSize: "11px", opacity: 0.75, display: "block" }}>
-            Pet Mood
-          </span>
-          <span style={{ fontSize: "15px", fontWeight: 700 }}>
-            {moodEmoji} {moodLabel}
-          </span>
+          <StatMeter label="HP" value={health} maxValue={100} />
+          <StatMeter label="Happiness" value={happiness} maxValue={100} />
+          <StatMeter label="Energy" value={energy} maxValue={100} />
+          <StatMeter label="Hunger" value={hunger} maxValue={100} />
+          <StatMeter label="Clean" value={cleanliness} maxValue={100} />
         </div>
       </div>
     </div>
   );
+}
+
+// Helper component for stat cards
+function StatCard({
+  label,
+  value,
+  minWidth,
+  fontSize,
+  style,
+}: {
+  label: string;
+  value: string | number;
+  minWidth?: string;
+  fontSize?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <div
+      style={{
+        backgroundColor: "rgba(255, 255, 255, 0.92)",
+        border: "2px solid rgba(101, 50, 15, 0.22)",
+        borderRadius: "10px",
+        padding: "6px 8px",
+        minWidth: minWidth || "70px",
+        textAlign: "right",
+        ...style,
+      }}
+    >
+      <span style={{ fontSize: "9px", opacity: 0.75, display: "block" }}>
+        {label}
+      </span>
+      <span style={{ fontSize: fontSize || "14px", fontWeight: 700 }}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
+// Helper component for stat meters
+function StatMeter({
+  label,
+  value,
+  maxValue = 100,
+}: {
+  label: string;
+  value: number;
+  maxValue?: number;
+}) {
+  const percentage = (value / maxValue) * 100;
+  let barColor = "#4ade80"; // green
+  if (percentage < 30) barColor = "#ef4444"; // red
+  else if (percentage < 60) barColor = "#eab308"; // yellow
+
+  return (
+    <div
+      style={{
+        backgroundColor: "rgba(255, 255, 255, 0.92)",
+        border: "1px solid rgba(101, 50, 15, 0.2)",
+        borderRadius: "6px",
+        padding: "4px",
+        minWidth: "60px",
+      }}
+    >
+      <div
+        style={{
+          fontSize: "8px",
+          fontWeight: 700,
+          marginBottom: "2px",
+          color: "#5a3a1c",
+        }}
+      >
+        {label}
+      </div>
+      <div
+        style={{
+          backgroundColor: "rgba(200, 180, 140, 0.3)",
+          borderRadius: "2px",
+          height: "8px",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: barColor,
+            height: "100%",
+            width: `${percentage}%`,
+            transition: "width 0.3s ease",
+          }}
+        />
+      </div>
+      <div style={{ fontSize: "7px", color: "#999", marginTop: "1px" }}>
+        {Math.round(value)}/{maxValue}
+      </div>
+    </div>
+  );
+}
+
+// Helper function to format time ago
+function formatTimeAgo(dateString: string): string {
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 1) return "now";
+    if (diffMins < 60) return `${diffMins}m`;
+    if (diffHours < 24) return `${diffHours}h`;
+    return `${diffDays}d`;
+  } catch {
+    return "unknown";
+  }
 }

@@ -64,6 +64,18 @@ export default function KawaiiRoomApp() {
   const [daysTogether, setDaysTogether] = useState(0);
   const [hudTotalPats, setHudTotalPats] = useState(0);
   const [hudMood, setHudMood] = useState("happy");
+  // New stat fields
+  const [happiness, setHappiness] = useState(75);
+  const [hunger, setHunger] = useState(50);
+  const [energy, setEnergy] = useState(80);
+  const [cleanliness, setCleanliness] = useState(70);
+  const [health, setHealth] = useState(90);
+  const [totalFeeds, setTotalFeeds] = useState(0);
+  const [totalPlays, setTotalPlays] = useState(0);
+  const [totalBaths, setTotalBaths] = useState(0);
+  const [lastFed, setLastFed] = useState<string | undefined>();
+  const [lastPlayed, setLastPlayed] = useState<string | undefined>();
+  const [lastBathed, setLastBathed] = useState<string | undefined>();
   const [petKind, setPetKind] = useState<PetKind | null>(null);
   const [petBreed, setPetBreed] = useState<PetBreed | null>(null);
   const [petName, setPetName] = useState("");
@@ -159,6 +171,18 @@ export default function KawaiiRoomApp() {
       const stats = await getPetStats(petId);
       setHudTotalPats(stats?.total_pats ?? 0);
       setHudMood(stats?.current_mood ?? "happy");
+      // Set additional stats
+      setHappiness(stats?.happiness ?? 75);
+      setHunger(stats?.hunger ?? 50);
+      setEnergy(stats?.energy ?? 80);
+      setCleanliness(stats?.cleanliness ?? 70);
+      setHealth(stats?.health ?? 90);
+      setTotalFeeds(stats?.total_feeds ?? 0);
+      setTotalPlays(stats?.total_plays ?? 0);
+      setTotalBaths(stats?.total_baths ?? 0);
+      setLastFed(stats?.last_fed);
+      setLastPlayed(stats?.last_played);
+      setLastBathed(stats?.last_bathed);
     },
     [allPets],
   );
@@ -168,6 +192,17 @@ export default function KawaiiRoomApp() {
       setDaysTogether(0);
       setHudTotalPats(0);
       setHudMood("happy");
+      setHappiness(75);
+      setHunger(50);
+      setEnergy(80);
+      setCleanliness(70);
+      setHealth(90);
+      setTotalFeeds(0);
+      setTotalPlays(0);
+      setTotalBaths(0);
+      setLastFed(undefined);
+      setLastPlayed(undefined);
+      setLastBathed(undefined);
       return;
     }
 
@@ -509,6 +544,18 @@ export default function KawaiiRoomApp() {
               selectedPetId={selectedPetId}
               onPetChange={handlePetChange}
               onAddPet={handleAddPet}
+              happiness={happiness}
+              hunger={hunger}
+              energy={energy}
+              cleanliness={cleanliness}
+              health={health}
+              totalFeeds={totalFeeds}
+              totalPlays={totalPlays}
+              totalBaths={totalBaths}
+              lastFed={lastFed}
+              lastPlayed={lastPlayed}
+              lastBathed={lastBathed}
+              currentScene={activeScene}
             />
           )}
 
