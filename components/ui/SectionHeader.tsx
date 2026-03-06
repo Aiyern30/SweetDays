@@ -73,7 +73,9 @@ export function SectionHeader({
           <span className="truncate">{title}</span>
         </h1>
         {description && (
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">{description}</p>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">
+            {description}
+          </p>
         )}
       </div>
       <div className="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0">
