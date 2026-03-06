@@ -65,16 +65,16 @@ export function TypeDropdown({ value, onChange }: TypeDropdownProps) {
     <div className="relative group/dd">
       <button className="flex items-center gap-1.5 focus:outline-none">
         <TypeBadge type={value} />
-        <ChevronDown size={12} className="text-zinc-500" />
+        <ChevronDown size={12} className="text-rose-500" />
       </button>
 
       {/* Dropdown panel */}
-      <div className="absolute left-0 top-full mt-1.5 z-50 hidden group-focus-within/dd:block w-52 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl shadow-black/60 overflow-hidden">
+      <div className="absolute left-0 top-full mt-1.5 z-50 hidden group-focus-within/dd:block w-52 bg-white border border-rose-200 rounded-xl shadow-2xl shadow-rose-200/40 overflow-hidden">
         {GROUPS.map((group) => {
           const items = QUESTION_TYPE_META.filter((m) => m.group === group.key);
           return (
             <div key={group.key}>
-              <p className="px-3 pt-2.5 pb-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
+              <p className="px-3 pt-2.5 pb-1 text-[10px] font-semibold uppercase tracking-widest text-rose-500">
                 {group.label}
               </p>
               {items.map((meta) => (
@@ -84,8 +84,8 @@ export function TypeDropdown({ value, onChange }: TypeDropdownProps) {
                   className={cn(
                     "w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors",
                     value === meta.value
-                      ? "text-zinc-100 bg-zinc-800"
-                      : "text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-200",
+                      ? "text-rose-900 bg-rose-100"
+                      : "text-rose-700 hover:bg-rose-50 hover:text-rose-900",
                   )}
                 >
                   {TYPE_ICONS[meta.value]}
@@ -107,7 +107,7 @@ export function TypeDropdown({ value, onChange }: TypeDropdownProps) {
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500 mb-2 mt-3">
+    <p className="text-[10px] font-semibold uppercase tracking-widest text-rose-500 mb-2 mt-3">
       {children}
     </p>
   );
@@ -144,7 +144,7 @@ export function OptionInput({
           "w-7 h-7 rounded-full text-xs font-bold border-2 flex-shrink-0 flex items-center justify-center transition-all duration-200",
           isSelected
             ? "bg-pink-500 border-pink-500 text-white shadow-lg shadow-pink-500/30"
-            : "border-zinc-600 text-zinc-500 hover:border-zinc-400",
+            : "border-rose-300 text-rose-500 hover:border-rose-400",
         )}
         title={isSelected ? "Correct answer" : "Mark as correct"}
       >
@@ -155,13 +155,13 @@ export function OptionInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={`Option ${label}`}
-        className="flex-1 bg-zinc-800/60 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/20"
+        className="flex-1 bg-white border border-rose-200 rounded-lg px-3 py-1.5 text-sm text-rose-900 placeholder:text-rose-300 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400/20"
       />
 
       <button
         onClick={onDelete}
         disabled={!canDelete}
-        className="text-zinc-600 hover:text-red-400 disabled:opacity-20 transition-colors flex-shrink-0"
+        className="text-rose-400 hover:text-red-500 disabled:opacity-20 transition-colors flex-shrink-0"
       >
         ✕
       </button>

@@ -29,7 +29,7 @@ export function LinearScaleEditor({
       <SectionLabel>Scale configuration</SectionLabel>
       <div className="grid grid-cols-2 gap-3 mb-1">
         <div>
-          <label className="text-[10px] text-zinc-600 uppercase tracking-wider block mb-1">
+          <label className="text-[10px] text-rose-500 uppercase tracking-wider block mb-1">
             Min value
           </label>
           <input
@@ -40,11 +40,11 @@ export function LinearScaleEditor({
             onChange={(e) =>
               onConfigChange({ ...config, min: parseInt(e.target.value) || 0 })
             }
-            className="w-full bg-zinc-800/60 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-zinc-100 focus:outline-none focus:border-pink-500/50"
+            className="w-full bg-white border border-rose-200 rounded-lg px-3 py-1.5 text-sm text-rose-900 focus:outline-none focus:border-pink-400"
           />
         </div>
         <div>
-          <label className="text-[10px] text-zinc-600 uppercase tracking-wider block mb-1">
+          <label className="text-[10px] text-rose-500 uppercase tracking-wider block mb-1">
             Max value
           </label>
           <input
@@ -58,11 +58,11 @@ export function LinearScaleEditor({
                 max: parseInt(e.target.value) || 10,
               })
             }
-            className="w-full bg-zinc-800/60 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-zinc-100 focus:outline-none focus:border-pink-500/50"
+            className="w-full bg-white border border-rose-200 rounded-lg px-3 py-1.5 text-sm text-rose-900 focus:outline-none focus:border-pink-400"
           />
         </div>
         <div>
-          <label className="text-[10px] text-zinc-600 uppercase tracking-wider block mb-1">
+          <label className="text-[10px] text-rose-500 uppercase tracking-wider block mb-1">
             Min label (optional)
           </label>
           <input
@@ -71,11 +71,11 @@ export function LinearScaleEditor({
               onConfigChange({ ...config, min_label: e.target.value })
             }
             placeholder="e.g. Not at all"
-            className="w-full bg-zinc-800/60 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-pink-500/50"
+            className="w-full bg-white border border-rose-200 rounded-lg px-3 py-1.5 text-sm text-rose-900 placeholder:text-rose-300 focus:outline-none focus:border-pink-400"
           />
         </div>
         <div>
-          <label className="text-[10px] text-zinc-600 uppercase tracking-wider block mb-1">
+          <label className="text-[10px] text-rose-500 uppercase tracking-wider block mb-1">
             Max label (optional)
           </label>
           <input
@@ -84,7 +84,7 @@ export function LinearScaleEditor({
               onConfigChange({ ...config, max_label: e.target.value })
             }
             placeholder="e.g. Extremely"
-            className="w-full bg-zinc-800/60 border border-zinc-700 placeholder:text-zinc-600 rounded-lg px-3 py-1.5 text-sm text-zinc-100 focus:outline-none focus:border-pink-500/50"
+            className="w-full bg-white border border-rose-200 placeholder:text-rose-300 rounded-lg px-3 py-1.5 text-sm text-rose-900 focus:outline-none focus:border-pink-400"
           />
         </div>
       </div>
@@ -105,7 +105,7 @@ export function LinearScaleEditor({
               "w-8 h-8 rounded-lg text-xs font-semibold border transition-all duration-150",
               selected === n
                 ? "bg-pink-500 border-pink-500 text-white shadow-md shadow-pink-500/30"
-                : "bg-zinc-800/60 border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200",
+                : "bg-white border-rose-200 text-rose-600 hover:border-rose-300 hover:text-rose-800",
             )}
           >
             {n}
@@ -115,7 +115,7 @@ export function LinearScaleEditor({
 
       {/* Labels */}
       {(config.min_label || config.max_label) && (
-        <div className="flex justify-between text-xs text-zinc-600 mt-1.5">
+        <div className="flex justify-between text-xs text-rose-500 mt-1.5">
           <span>{config.min_label}</span>
           <span>{config.max_label}</span>
         </div>

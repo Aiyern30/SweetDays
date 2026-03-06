@@ -57,7 +57,7 @@ export function CheckboxesEditor({
                 "w-7 h-7 rounded-md border-2 shrink-0 flex items-center justify-center transition-all duration-200 text-xs font-bold",
                 selected.includes(opt.key)
                   ? "bg-pink-500 border-pink-500 text-white shadow-lg shadow-pink-500/30"
-                  : "border-zinc-600 text-zinc-500 hover:border-zinc-400",
+                  : "border-rose-300 text-rose-500 hover:border-rose-400",
               )}
             >
               {selected.includes(opt.key) ? "✓" : opt.key}
@@ -67,13 +67,13 @@ export function CheckboxesEditor({
               value={opt.label}
               onChange={(e) => updateLabel(idx, e.target.value)}
               placeholder={`Option ${opt.key}`}
-              className="flex-1 bg-zinc-800/60 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/20"
+              className="flex-1 bg-white border border-rose-200 rounded-lg px-3 py-1.5 text-sm text-rose-900 placeholder:text-rose-300 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400/20"
             />
 
             <button
               onClick={() => removeOption(idx)}
               disabled={options.length <= 2}
-              className="text-zinc-600 hover:text-red-400 disabled:opacity-20 transition-colors"
+              className="text-rose-400 hover:text-red-500 disabled:opacity-20 transition-colors"
             >
               ✕
             </button>
@@ -84,12 +84,12 @@ export function CheckboxesEditor({
       {options.length < 6 && (
         <button
           onClick={addOption}
-          className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-pink-400 transition-colors mt-2"
+          className="flex items-center gap-1.5 text-xs text-rose-500 hover:text-pink-500 transition-colors mt-2"
         >
           <Plus size={12} /> Add option
         </button>
       )}
-      <p className="text-xs text-zinc-600 mt-2">
+      <p className="text-xs text-rose-500 mt-2">
         Checked boxes = your correct answers. Partner must match all of them.
       </p>
     </div>

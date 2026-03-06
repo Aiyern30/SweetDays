@@ -42,19 +42,19 @@ export function DropdownEditor({
       <div className="space-y-2 mb-3">
         {options.map((opt, idx) => (
           <div key={opt.key} className="flex items-center gap-2">
-            <span className="w-6 text-center text-xs text-zinc-600 font-mono shrink-0">
+            <span className="w-6 text-center text-xs text-rose-500 font-mono shrink-0">
               {idx + 1}
             </span>
             <input
               value={opt.label}
               onChange={(e) => updateLabel(idx, e.target.value)}
               placeholder={`Option ${idx + 1}`}
-              className="flex-1 bg-zinc-800/60 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/20"
+              className="flex-1 bg-white border border-rose-200 rounded-lg px-3 py-1.5 text-sm text-rose-900 placeholder:text-rose-300 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400/20"
             />
             <button
               onClick={() => removeOption(idx)}
               disabled={options.length <= 2}
-              className="text-zinc-600 hover:text-red-400 disabled:opacity-20 transition-colors"
+              className="text-rose-400 hover:text-red-500 disabled:opacity-20 transition-colors"
             >
               ✕
             </button>
@@ -65,7 +65,7 @@ export function DropdownEditor({
       {options.length < 6 && (
         <button
           onClick={addOption}
-          className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-pink-400 transition-colors mb-4"
+          className="flex items-center gap-1.5 text-xs text-rose-500 hover:text-pink-500 transition-colors mb-4"
         >
           <Plus size={12} /> Add option
         </button>
@@ -77,17 +77,17 @@ export function DropdownEditor({
         <select
           value={correctOption}
           onChange={(e) => onCorrectChange(e.target.value)}
-          className="w-full appearance-none bg-zinc-800/60 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-pink-500/50 pr-8"
+          className="w-full appearance-none bg-white border border-rose-200 rounded-lg px-3 py-2 text-sm text-rose-900 focus:outline-none focus:border-pink-400 pr-8"
         >
           {options.map((opt) => (
-            <option key={opt.key} value={opt.key} className="bg-zinc-900">
+            <option key={opt.key} value={opt.key} className="bg-white text-rose-900">
               {opt.label || `Option ${opt.key}`}
             </option>
           ))}
         </select>
         <ChevronDown
           size={14}
-          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none"
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-rose-500 pointer-events-none"
         />
       </div>
     </div>

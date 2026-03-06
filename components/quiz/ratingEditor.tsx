@@ -26,7 +26,7 @@ export function RatingEditor({
 
       {/* Icon picker */}
       <div className="flex items-center gap-3 mb-3">
-        <span className="text-xs text-zinc-500">Icon:</span>
+        <span className="text-xs text-rose-500">Icon:</span>
         {(["star", "heart"] as const).map((icon) => (
           <button
             key={icon}
@@ -35,7 +35,7 @@ export function RatingEditor({
               "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs transition-all",
               config.icon === icon
                 ? "border-pink-500 text-pink-300 bg-pink-500/10"
-                : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
+                : "border-rose-200 text-rose-500 hover:border-rose-300",
             )}
           >
             {icon === "star" ? <Star size={13} /> : <Heart size={13} />}
@@ -44,7 +44,7 @@ export function RatingEditor({
         ))}
 
         {/* Max stars selector */}
-        <span className="text-xs text-zinc-500 ml-3">Max:</span>
+        <span className="text-xs text-rose-500 ml-3">Max:</span>
         {[5, 10].map((n) => (
           <button
             key={n}
@@ -53,7 +53,7 @@ export function RatingEditor({
               "w-8 h-7 rounded-lg border text-xs font-semibold transition-all",
               config.max === n
                 ? "border-pink-500 text-pink-300 bg-pink-500/10"
-                : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
+                : "border-rose-200 text-rose-500 hover:border-rose-300",
             )}
           >
             {n}
@@ -83,7 +83,7 @@ export function RatingEditor({
                   "transition-colors",
                   n <= selected
                     ? "fill-amber-400 text-amber-400"
-                    : "text-zinc-700 fill-transparent",
+                    : "text-rose-300 fill-transparent",
                 )}
               />
             ) : (
@@ -93,7 +93,7 @@ export function RatingEditor({
                   "transition-colors",
                   n <= selected
                     ? "fill-pink-500 text-pink-500"
-                    : "text-zinc-700 fill-transparent",
+                    : "text-rose-300 fill-transparent",
                 )}
               />
             )}

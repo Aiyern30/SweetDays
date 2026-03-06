@@ -19,9 +19,9 @@ export function ParagraphEditor({
         onChange={(e) => onCorrectChange(e.target.value)}
         placeholder="Write your longer answer here..."
         rows={3}
-        className="w-full bg-zinc-800/60 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/20 resize-none leading-relaxed"
+        className="w-full bg-white border border-rose-200 rounded-lg px-3 py-2 text-sm text-rose-900 placeholder:text-rose-300 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400/20 resize-none leading-relaxed"
       />
-      <p className="text-xs text-zinc-600 mt-1.5">
+      <p className="text-xs text-rose-500 mt-1.5">
         Your partner writes a long-form answer. Use this for open reflections.
       </p>
     </div>

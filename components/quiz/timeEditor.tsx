@@ -18,9 +18,9 @@ export function TimeEditor({
         type="time"
         value={correctOption}
         onChange={(e) => onCorrectChange(e.target.value)}
-        className="w-full bg-zinc-800/60 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/20 scheme-dark"
+        className="w-full bg-white border border-rose-200 rounded-lg px-3 py-2 text-sm text-rose-900 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400/20"
       />
-      <p className="text-xs text-zinc-600 mt-1.5">
+      <p className="text-xs text-rose-500 mt-1.5">
         Your partner picks a time — it will be compared to yours.
       </p>
     </div>

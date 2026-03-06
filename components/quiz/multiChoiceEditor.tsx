@@ -56,7 +56,7 @@ export function MultipleChoiceEditor({
       {options.length < 6 && (
         <button
           onClick={addOption}
-          className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-pink-400 transition-colors mt-2"
+          className="flex items-center gap-1.5 text-xs text-rose-500 hover:text-pink-500 transition-colors mt-2"
         >
           <Plus size={12} /> Add option
         </button>
