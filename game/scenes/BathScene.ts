@@ -275,7 +275,7 @@ export class BathScene extends Phaser.Scene {
 
   private drawPetInTub(W: number, H: number) {
     const cx = W * 0.46;
-    const cy = H * 0.48;
+    const cy = H * 0.58; // 🛁 Move pet INTO the bathtub (same Y as tub center)
 
     this.pet = this.add.container(cx - 10, cy - 10);
 

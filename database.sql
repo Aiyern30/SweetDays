@@ -177,6 +177,22 @@ CREATE TABLE public.pet_stats (
   CONSTRAINT pet_stats_pkey PRIMARY KEY (id),
   CONSTRAINT pet_stats_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
 );
+CREATE TABLE public.pet_daily_stats (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  pet_id uuid NOT NULL,
+  stat_date date NOT NULL,
+  daily_pats integer DEFAULT 0,
+  daily_feeds integer DEFAULT 0,
+  daily_plays integer DEFAULT 0,
+  daily_baths integer DEFAULT 0,
+  play_time_minutes integer DEFAULT 0,
+  sleep_hours numeric DEFAULT 0,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT pet_daily_stats_pkey PRIMARY KEY (id),
+  CONSTRAINT pet_daily_stats_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id),
+  CONSTRAINT pet_daily_stats_unique_pet_date UNIQUE (pet_id, stat_date)
+);
 CREATE TABLE public.pets (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   relationship_id uuid NOT NULL,

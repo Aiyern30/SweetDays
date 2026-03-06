@@ -212,6 +212,143 @@ export async function getPetMoodHistory(petId: string) {
   }
 }
 
+// Update or create daily stats for today
+export async function updateDailyStats(
+  petId: string,
+  interactionType: "pat" | "feed" | "play" | "bath" | "sleep",
+) {
+  try {
+    const supabase = await createClient();
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
+
+    // Try to get today's stats
+    const { data: existingStats } = await supabase
+      .from("pet_daily_stats")
+      .select("*")
+      .eq("pet_id", petId)
+      .eq("stat_date", today)
+      .single();
+
+    const updates: Record<string, number> = {};
+
+    // Increment the appropriate counter
+    if (interactionType === "pat") {
+      updates.daily_pats = (existingStats?.daily_pats || 0) + 1;
+    } else if (interactionType === "feed") {
+      updates.daily_feeds = (existingStats?.daily_feeds || 0) + 1;
+    } else if (interactionType === "play") {
+      updates.daily_plays = (existingStats?.daily_plays || 0) + 1;
+      // Each play session = 5 minutes (adjust as needed)
+      updates.play_time_minutes = (existingStats?.play_time_minutes || 0) + 5;
+    } else if (interactionType === "bath") {
+      updates.daily_baths = (existingStats?.daily_baths || 0) + 1;
+    } else if (interactionType === "sleep") {
+      // Each sleep = 2 hours (adjust as needed)
+      updates.sleep_hours = (existingStats?.sleep_hours || 0) + 2;
+    }
+
+    // Upsert (update if exists, insert if not)
+    const { data, error } = await supabase
+      .from("pet_daily_stats")
+      .upsert(
+        {
+          pet_id: petId,
+          stat_date: today,
+          ...updates,
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "pet_id,stat_date",
+        },
+      )
+      .select()
+      .single();
+
+    if (error) {
+      console.error("[updateDailyStats] ❌ Error:", error);
+      return { error: "Failed to update daily stats" };
+    }
+
+    console.log(
+      `[updateDailyStats] ✅ Updated ${interactionType} for ${today}`,
+      data,
+    );
+    return { success: true, stats: data };
+  } catch (error) {
+    console.error("[updateDailyStats] ❌ Catch error:", error);
+    return { error: "An unexpected error occurred" };
+  }
+}
+
+// Get daily stats for a specific date
+export async function getDailyStats(petId: string, date?: string) {
+  try {
+    const supabase = await createClient();
+    const targetDate = date || new Date().toISOString().split("T")[0];
+
+    const { data, error } = await supabase
+      .from("pet_daily_stats")
+      .select("*")
+      .eq("pet_id", petId)
+      .eq("stat_date", targetDate)
+      .single();
+
+    if (error) {
+      // No stats for this date yet
+      if (error.code === "PGRST116") {
+        return {
+          success: true,
+          stats: {
+            pet_id: petId,
+            stat_date: targetDate,
+            daily_pats: 0,
+            daily_feeds: 0,
+            daily_plays: 0,
+            daily_baths: 0,
+            play_time_minutes: 0,
+            sleep_hours: 0,
+          },
+        };
+      }
+      console.error("[getDailyStats] ❌ Error:", error);
+      return { error: "Failed to get daily stats" };
+    }
+
+    return { success: true, stats: data };
+  } catch (error) {
+    console.error("[getDailyStats] ❌ Catch error:", error);
+    return { error: "An unexpected error occurred" };
+  }
+}
+
+// Get daily stats for last N days
+export async function getDailyStatsRange(petId: string, days: number = 7) {
+  try {
+    const supabase = await createClient();
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days + 1);
+
+    const { data, error } = await supabase
+      .from("pet_daily_stats")
+      .select("*")
+      .eq("pet_id", petId)
+      .gte("stat_date", startDate.toISOString().split("T")[0])
+      .lte("stat_date", endDate.toISOString().split("T")[0])
+      .order("stat_date", { ascending: true });
+
+    if (error) {
+      console.error("[getDailyStatsRange] ❌ Error:", error);
+      return { error: "Failed to get daily stats range" };
+    }
+
+    return { success: true, stats: data || [] };
+  } catch (error) {
+    console.error("[getDailyStatsRange] ❌ Catch error:", error);
+    return { error: "An unexpected error occurred" };
+  }
+}
+
 // Handle pet interaction - orchestrated function
 export async function handlePetInteraction(
   petId: string,
@@ -257,6 +394,9 @@ export async function handlePetInteraction(
       );
       return statsResult;
     }
+
+    // Update daily stats for today
+    await updateDailyStats(petId, interactionType);
 
     // Record mood history ONLY when mood actually changes (not every interaction)
     // This prevents 100 pats from creating 100 rows - only records significant mood transitions
