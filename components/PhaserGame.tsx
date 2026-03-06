@@ -205,7 +205,7 @@ export default function PhaserGame({
     }
   }, [activeScene]);
 
-  // 3) Update pet when kind or breed changes within the current scene
+  // 3) Keep pet synced when kind/breed OR active scene changes
   useEffect(() => {
     const game = gameRef.current;
     if (!game || !isGameReady) {
@@ -245,7 +245,7 @@ export default function PhaserGame({
         s.setPetType(petKind, petBreed);
       }
     }
-  }, [petKind, petBreed, isGameReady]);
+  }, [petKind, petBreed, activeScene, isGameReady]);
 
   // 4) Pass selected food to FeedScene
   useEffect(() => {

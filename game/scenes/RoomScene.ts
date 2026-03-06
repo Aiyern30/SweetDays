@@ -19,6 +19,11 @@ export class RoomScene extends Phaser.Scene {
     super({ key: "RoomScene" });
   }
 
+  init(data: { petKind?: PetKind; petBreed?: PetBreed }) {
+    if (data.petKind) this.currentPetKind = data.petKind;
+    if (data.petBreed) this.currentPetBreed = data.petBreed;
+  }
+
   preload() {
     // We draw everything procedurally - no external assets needed
   }
