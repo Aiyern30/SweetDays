@@ -74,10 +74,26 @@ export default function HudBar({
   const uniquePets = Array.from(
     new Map(allPets.map((pet) => [pet.id, pet])).values(),
   );
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // Track window size for responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+      setIsTablet(window.innerWidth < 768);
+    };
+
+    // Set initial state
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -123,27 +139,28 @@ export default function HudBar({
         right: "12px",
         zIndex: 30,
         display: "flex",
-        justifyContent: "space-between",
+        flexDirection: isMobile ? "column" : "row",
+        justifyContent: isMobile ? "flex-start" : "space-between",
         alignItems: "flex-start",
-        gap: "20px",
+        gap: isMobile ? "8px" : "20px",
         pointerEvents: "none",
       }}
     >
       {/* Left controls: pet selector + exit button */}
-      <div style={{ display: "flex", gap: "8px", pointerEvents: "auto" }}>
+      <div style={{ display: "flex", gap: "8px", pointerEvents: "auto", flexWrap: "wrap" }}>
         <div ref={dropdownRef} style={{ position: "relative" }}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "8px",
-              padding: "8px 12px",
+              gap: isMobile ? "4px" : "8px",
+              padding: isMobile ? "6px 10px" : "8px 12px",
               backgroundColor: "rgba(255, 255, 255, 0.9)",
               border: "2px solid rgb(101, 50, 15)",
               borderRadius: "6px",
               cursor: "pointer",
-              fontSize: "14px",
+              fontSize: isMobile ? "12px" : "14px",
               fontWeight: "600",
               transition: "all 0.2s ease",
             }}
@@ -161,11 +178,11 @@ export default function HudBar({
             }}
           >
             {isCat ? (
-              <CatFaceIcon type={petBreed as CatType} size={20} />
+              <CatFaceIcon type={petBreed as CatType} size={isMobile ? 16 : 20} />
             ) : (
-              <DogFaceIcon type={petBreed as DogType} size={20} />
+              <DogFaceIcon type={petBreed as DogType} size={isMobile ? 16 : 20} />
             )}
-            <span>{petName}</span>
+            {!isMobile && <span>{petName}</span>}
             <span style={{ fontSize: "12px" }}>▼</span>
           </button>
 
@@ -277,19 +294,19 @@ export default function HudBar({
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "6px",
-                padding: "8px 12px",
+                gap: isMobile ? "3px" : "6px",
+                padding: isMobile ? "6px 10px" : "8px 12px",
                 backgroundColor: "rgba(255, 245, 245, 0.95)",
                 border: "2px solid rgba(176, 60, 60, 0.7)",
                 borderRadius: "6px",
                 cursor: "pointer",
-                fontSize: "13px",
+                fontSize: isMobile ? "11px" : "13px",
                 fontWeight: 700,
                 color: "#8a2d2d",
               }}
             >
               <span>↩</span>
-              <span>Exit Game</span>
+              {!isMobile && <span>Exit Game</span>}
             </button>
           </AlertDialogTrigger>
 
@@ -321,99 +338,117 @@ export default function HudBar({
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "12px",
+          gap: isMobile ? "6px" : "12px",
           fontSize: "13px",
           fontWeight: "600",
           color: "#5a3a1c",
           pointerEvents: "auto",
         }}
       >
-        {/* Primary Stats Row - Responsive */}
+        {/* Primary Stats Row - Compact on mobile */}
         <div
           style={{
             display: "flex",
-            gap: "8px",
+            gap: isMobile ? "6px" : "8px",
             flexWrap: "wrap",
             justifyContent: "flex-end",
           }}
         >
-          <StatCard label="Days" value={daysTogether} minWidth="70px" />
-          <StatCard label="Pats" value={totalPats} minWidth="70px" />
+          <StatCard 
+            label="Days" 
+            value={daysTogether} 
+            minWidth={isMobile ? "50px" : "70px"}
+            compact={isMobile}
+          />
+          <StatCard 
+            label="Pats" 
+            value={totalPats} 
+            minWidth={isMobile ? "50px" : "70px"}
+            compact={isMobile}
+          />
           <StatCard
             label="Mood"
             value={`${moodEmoji}`}
-            minWidth="70px"
+            minWidth={isMobile ? "50px" : "70px"}
+            compact={isMobile}
             style={{ fontSize: "14px" }}
           />
         </div>
 
-        {/* Scene-Specific Stats */}
-        <div
-          style={{
-            display: "flex",
-            gap: "8px",
-            flexWrap: "wrap",
-            justifyContent: "flex-end",
-          }}
-        >
-          {currentScene === "feed" && (
-            <>
-              <StatCard label="Feeds" value={totalFeeds} minWidth="65px" />
-              {lastFed && (
-                <StatCard
-                  label="Last Fed"
-                  value={formatTimeAgo(lastFed)}
-                  minWidth="90px"
-                  fontSize="10px"
-                />
-              )}
-            </>
-          )}
+        {/* Scene-Specific Stats - Compact on mobile */}
+        {(currentScene === "feed" || currentScene === "play" || currentScene === "bath") && (
+          <div
+            style={{
+              display: "flex",
+              gap: isMobile ? "4px" : "8px",
+              flexWrap: "wrap",
+              justifyContent: "flex-end",
+            }}
+          >
+            {currentScene === "feed" && (
+              <>
+                <StatCard label="Feeds" value={totalFeeds} minWidth={isMobile ? "45px" : "65px"} compact={isMobile} />
+                {lastFed && (
+                  <StatCard
+                    label="Last Fed"
+                    value={formatTimeAgo(lastFed)}
+                    minWidth={isMobile ? "60px" : "90px"}
+                    fontSize={isMobile ? "9px" : "10px"}
+                    compact={isMobile}
+                  />
+                )}
+              </>
+            )}
 
-          {currentScene === "play" && (
-            <>
-              <StatCard label="Plays" value={totalPlays} minWidth="65px" />
-              {lastPlayed && (
-                <StatCard
-                  label="Last Play"
-                  value={formatTimeAgo(lastPlayed)}
-                  minWidth="90px"
-                  fontSize="10px"
-                />
-              )}
-            </>
-          )}
+            {currentScene === "play" && (
+              <>
+                <StatCard label="Plays" value={totalPlays} minWidth={isMobile ? "45px" : "65px"} compact={isMobile} />
+                {lastPlayed && (
+                  <StatCard
+                    label="Last Play"
+                    value={formatTimeAgo(lastPlayed)}
+                    minWidth={isMobile ? "60px" : "90px"}
+                    fontSize={isMobile ? "9px" : "10px"}
+                    compact={isMobile}
+                  />
+                )}
+              </>
+            )}
 
-          {currentScene === "bath" && (
-            <>
-              <StatCard label="Baths" value={totalBaths} minWidth="65px" />
-              {lastBathed && (
-                <StatCard
-                  label="Last Bath"
-                  value={formatTimeAgo(lastBathed)}
-                  minWidth="90px"
-                  fontSize="10px"
-                />
-              )}
-            </>
-          )}
-        </div>
+            {currentScene === "bath" && (
+              <>
+                <StatCard label="Baths" value={totalBaths} minWidth={isMobile ? "45px" : "65px"} compact={isMobile} />
+                {lastBathed && (
+                  <StatCard
+                    label="Last Bath"
+                    value={formatTimeAgo(lastBathed)}
+                    minWidth={isMobile ? "60px" : "90px"}
+                    fontSize={isMobile ? "9px" : "10px"}
+                    compact={isMobile}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        )}
 
-        {/* Pet Health/Status Stats - Mobile Friendly */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(60px, 1fr))",
-            gap: "6px",
-            fontSize: "11px",
-          }}
-        >
-          <StatMeter label="HP" value={health} maxValue={100} />
-          <StatMeter label="Happiness" value={happiness} maxValue={100} />
-          <StatMeter label="Energy" value={energy} maxValue={100} />
-          <StatMeter label="Hunger" value={hunger} maxValue={100} />
-          <StatMeter label="Clean" value={cleanliness} maxValue={100} />
-        </div>
+        {/* Pet Health/Status Stats - Desktop only */}
+        {!isTablet && (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(60px, 1fr))",
+              gap: "6px",
+              fontSize: "11px",
+            }}
+          >
+            <StatMeter label="HP" value={health} maxValue={100} />
+            <StatMeter label="Happiness" value={happiness} maxValue={100} />
+            <StatMeter label="Energy" value={energy} maxValue={100} />
+            <StatMeter label="Hunger" value={hunger} maxValue={100} />
+            <StatMeter label="Clean" value={cleanliness} maxValue={100} />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -425,12 +460,14 @@ function StatCard({
   value,
   minWidth,
   fontSize,
+  compact,
   style,
 }: {
   label: string;
   value: string | number;
   minWidth?: string;
   fontSize?: string;
+  compact?: boolean;
   style?: React.CSSProperties;
 }) {
   return (
@@ -439,16 +476,16 @@ function StatCard({
         backgroundColor: "rgba(255, 255, 255, 0.92)",
         border: "2px solid rgba(101, 50, 15, 0.22)",
         borderRadius: "10px",
-        padding: "6px 8px",
+        padding: compact ? "4px 6px" : "6px 8px",
         minWidth: minWidth || "70px",
         textAlign: "right",
         ...style,
       }}
     >
-      <span style={{ fontSize: "9px", opacity: 0.75, display: "block" }}>
+      <span style={{ fontSize: compact ? "7px" : "9px", opacity: 0.75, display: "block" }}>
         {label}
       </span>
-      <span style={{ fontSize: fontSize || "14px", fontWeight: 700 }}>
+      <span style={{ fontSize: fontSize || compact ? "12px" : "14px", fontWeight: 700 }}>
         {value}
       </span>
     </div>
@@ -467,7 +504,8 @@ function StatMeter({
 }) {
   const percentage = (value / maxValue) * 100;
   let barColor = "#4ade80"; // green
-  if (percentage < 30) barColor = "#ef4444"; // red
+  if (percentage < 30)
+    barColor = "#ef4444"; // red
   else if (percentage < 60) barColor = "#eab308"; // yellow
 
   return (
