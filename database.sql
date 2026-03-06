@@ -1,6 +1,17 @@
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
 
+CREATE TABLE public.achievement_definitions (
+  id text NOT NULL,
+  name text NOT NULL,
+  description text NOT NULL,
+  icon text,
+  category text NOT NULL,
+  rarity text DEFAULT 'common'::text,
+  unlock_condition jsonb NOT NULL,
+  display_order integer DEFAULT 0,
+  CONSTRAINT achievement_definitions_pkey PRIMARY KEY (id)
+);
 CREATE TABLE public.calendar_events (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   relationship_id uuid,
@@ -38,6 +49,40 @@ CREATE TABLE public.confessions (
   CONSTRAINT confessions_pkey PRIMARY KEY (id),
   CONSTRAINT confessions_sender_id_fkey FOREIGN KEY (sender_id) REFERENCES public.profiles(id)
 );
+CREATE TABLE public.couple_challenges (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  relationship_id uuid NOT NULL,
+  created_by uuid NOT NULL,
+  title text NOT NULL,
+  description text,
+  category text DEFAULT 'fun'::text,
+  difficulty text DEFAULT 'easy'::text,
+  duration_days integer DEFAULT 1,
+  due_at timestamp with time zone,
+  status text DEFAULT 'active'::text,
+  partner1_completed boolean DEFAULT false,
+  partner2_completed boolean DEFAULT false,
+  proof_photos jsonb DEFAULT '[]'::jsonb,
+  notes text,
+  completed_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT couple_challenges_pkey PRIMARY KEY (id),
+  CONSTRAINT couple_challenges_relationship_id_fkey FOREIGN KEY (relationship_id) REFERENCES public.relationships(id),
+  CONSTRAINT couple_challenges_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.couple_growth_stats (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  relationship_id uuid NOT NULL UNIQUE,
+  total_goals_completed integer DEFAULT 0,
+  total_challenges_completed integer DEFAULT 0,
+  current_streak_days integer DEFAULT 0,
+  longest_streak_days integer DEFAULT 0,
+  total_points integer DEFAULT 0,
+  last_activity_date date,
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT couple_growth_stats_pkey PRIMARY KEY (id),
+  CONSTRAINT couple_growth_stats_relationship_id_fkey FOREIGN KEY (relationship_id) REFERENCES public.relationships(id)
+);
 CREATE TABLE public.diaries (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   relationship_id uuid,
@@ -51,6 +96,19 @@ CREATE TABLE public.diaries (
   CONSTRAINT diaries_pkey PRIMARY KEY (id),
   CONSTRAINT diaries_relationship_id_fkey FOREIGN KEY (relationship_id) REFERENCES public.relationships(id),
   CONSTRAINT diaries_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.goal_checkins (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  goal_id uuid NOT NULL,
+  user_id uuid NOT NULL,
+  check_date date NOT NULL DEFAULT CURRENT_DATE,
+  value numeric DEFAULT 1,
+  note text,
+  mood text,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT goal_checkins_pkey PRIMARY KEY (id),
+  CONSTRAINT goal_checkins_goal_id_fkey FOREIGN KEY (goal_id) REFERENCES public.shared_goals(id),
+  CONSTRAINT goal_checkins_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
 );
 CREATE TABLE public.milestones (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -83,52 +141,29 @@ CREATE TABLE public.notes (
   CONSTRAINT notes_relationship_id_fkey FOREIGN KEY (relationship_id) REFERENCES public.relationships(id),
   CONSTRAINT notes_author_id_fkey FOREIGN KEY (author_id) REFERENCES public.profiles(id)
 );
-CREATE TABLE public.achievement_definitions (
-  id text NOT NULL PRIMARY KEY,
-  name text NOT NULL,
-  description text NOT NULL,
-  icon text,
-  category text NOT NULL,
-  rarity text DEFAULT 'common'::text,
-  unlock_condition jsonb NOT NULL,
-  display_order integer DEFAULT 0
-);
 CREATE TABLE public.pet_achievements (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   pet_id uuid NOT NULL,
-  achievement_id text NOT NULL,
   achievement_type text NOT NULL,
   achieved_at timestamp with time zone DEFAULT now(),
+  achievement_id text,
   CONSTRAINT pet_achievements_pkey PRIMARY KEY (id),
   CONSTRAINT pet_achievements_achievement_id_fkey FOREIGN KEY (achievement_id) REFERENCES public.achievement_definitions(id),
   CONSTRAINT pet_achievements_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
 );
-CREATE TABLE public.pet_care_streaks (
+CREATE TABLE public.pet_daily_stats (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   pet_id uuid NOT NULL,
-  streak_type text NOT NULL,
-  current_streak integer DEFAULT 1,
-  best_streak integer DEFAULT 1,
-  last_done_date date,
+  stat_date date NOT NULL,
+  daily_pats integer DEFAULT 0,
+  daily_feeds integer DEFAULT 0,
+  daily_plays integer DEFAULT 0,
+  daily_baths integer DEFAULT 0,
+  sleep_hours numeric DEFAULT 0,
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT pet_care_streaks_pkey PRIMARY KEY (id),
-  CONSTRAINT pet_care_streaks_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
-);
-CREATE TABLE public.pet_interactions (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  pet_id uuid NOT NULL,
-  interaction_type text NOT NULL,
-  interaction_details jsonb,
-  performed_by uuid NOT NULL,
-  happiness_before numeric,
-  happiness_after numeric,
-  mood_before text,
-  mood_after text,
-  created_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT pet_interactions_pkey PRIMARY KEY (id),
-  CONSTRAINT pet_interactions_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id),
-  CONSTRAINT pet_interactions_performed_by_fkey FOREIGN KEY (performed_by) REFERENCES public.profiles(id)
+  CONSTRAINT pet_daily_stats_pkey PRIMARY KEY (id),
+  CONSTRAINT pet_daily_stats_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
 );
 CREATE TABLE public.pet_mood_history (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -141,18 +176,6 @@ CREATE TABLE public.pet_mood_history (
   recorded_at timestamp with time zone DEFAULT now(),
   CONSTRAINT pet_mood_history_pkey PRIMARY KEY (id),
   CONSTRAINT pet_mood_history_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
-);
-CREATE TABLE public.pet_preferences (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  pet_id uuid NOT NULL UNIQUE,
-  favorite_food text,
-  favorite_toy text,
-  food_preferences jsonb DEFAULT '{}'::jsonb,
-  toy_preferences jsonb DEFAULT '{}'::jsonb,
-  least_favorite_food text,
-  updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT pet_preferences_pkey PRIMARY KEY (id),
-  CONSTRAINT pet_preferences_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
 );
 CREATE TABLE public.pet_stats (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -176,21 +199,6 @@ CREATE TABLE public.pet_stats (
   updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT pet_stats_pkey PRIMARY KEY (id),
   CONSTRAINT pet_stats_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
-);
-CREATE TABLE public.pet_daily_stats (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  pet_id uuid NOT NULL,
-  stat_date date NOT NULL,
-  daily_pats integer DEFAULT 0,
-  daily_feeds integer DEFAULT 0,
-  daily_plays integer DEFAULT 0,
-  daily_baths integer DEFAULT 0,
-  sleep_hours numeric DEFAULT 0,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT pet_daily_stats_pkey PRIMARY KEY (id),
-  CONSTRAINT pet_daily_stats_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id),
-  CONSTRAINT pet_daily_stats_unique_pet_date UNIQUE (pet_id, stat_date)
 );
 CREATE TABLE public.pets (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -227,6 +235,71 @@ CREATE TABLE public.profiles (
   CONSTRAINT profiles_pkey PRIMARY KEY (id),
   CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );
+CREATE TABLE public.qa_answers (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  question_id uuid NOT NULL UNIQUE,
+  answered_by uuid NOT NULL,
+  answer_text text NOT NULL,
+  is_revealed boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT qa_answers_pkey PRIMARY KEY (id),
+  CONSTRAINT qa_answers_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.qa_questions(id),
+  CONSTRAINT qa_answers_answered_by_fkey FOREIGN KEY (answered_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.qa_questions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  relationship_id uuid NOT NULL,
+  created_by uuid NOT NULL,
+  question_text text NOT NULL,
+  category text,
+  is_answered boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT qa_questions_pkey PRIMARY KEY (id),
+  CONSTRAINT qa_questions_relationship_id_fkey FOREIGN KEY (relationship_id) REFERENCES public.relationships(id),
+  CONSTRAINT qa_questions_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.quiz_questions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  session_id uuid NOT NULL,
+  created_by uuid NOT NULL,
+  question_text text NOT NULL,
+  question_type text NOT NULL,
+  options jsonb,
+  correct_option text,
+  display_order integer DEFAULT 0,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT quiz_questions_pkey PRIMARY KEY (id),
+  CONSTRAINT quiz_questions_session_id_fkey FOREIGN KEY (session_id) REFERENCES public.quiz_sessions(id),
+  CONSTRAINT quiz_questions_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.quiz_responses (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  session_id uuid NOT NULL,
+  question_id uuid NOT NULL,
+  answered_by uuid NOT NULL,
+  selected_option text NOT NULL,
+  is_match boolean,
+  answered_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT quiz_responses_pkey PRIMARY KEY (id),
+  CONSTRAINT quiz_responses_session_id_fkey FOREIGN KEY (session_id) REFERENCES public.quiz_sessions(id),
+  CONSTRAINT quiz_responses_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.quiz_questions(id),
+  CONSTRAINT quiz_responses_answered_by_fkey FOREIGN KEY (answered_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.quiz_sessions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  relationship_id uuid NOT NULL,
+  created_by uuid NOT NULL,
+  title text,
+  status text DEFAULT 'draft'::text,
+  total_questions integer DEFAULT 0,
+  match_score numeric,
+  completed_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT quiz_sessions_pkey PRIMARY KEY (id),
+  CONSTRAINT quiz_sessions_relationship_id_fkey FOREIGN KEY (relationship_id) REFERENCES public.relationships(id),
+  CONSTRAINT quiz_sessions_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
+);
 CREATE TABLE public.relationship_invitations (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   inviter_id uuid NOT NULL,
@@ -241,43 +314,6 @@ CREATE TABLE public.relationship_invitations (
   CONSTRAINT relationship_invitations_inviter_id_fkey FOREIGN KEY (inviter_id) REFERENCES public.profiles(id),
   CONSTRAINT relationship_invitations_relationship_id_fkey FOREIGN KEY (relationship_id) REFERENCES public.relationships(id)
 );
-
--- Achievement Definitions
-INSERT INTO achievement_definitions (id, name, description, icon, category, rarity, unlock_condition, display_order) VALUES
--- First Time Achievements
-('first_pat', 'First Love', 'Pat your pet for the first time', '💕', 'beginner', 'common', '{"type": "interaction", "requirement": "first_pat"}', 1),
-('first_feed', 'First Meal', 'Feed your pet for the first time', '🍽️', 'beginner', 'common', '{"type": "interaction", "requirement": "first_feed"}', 2),
-('first_play', 'Playtime Buddy', 'Play with your pet for the first time', '🎮', 'beginner', 'common', '{"type": "interaction", "requirement": "first_play"}', 3),
-('first_bath', 'Bath Time', 'Give your pet a bath for the first time', '🛁', 'beginner', 'common', '{"type": "interaction", "requirement": "first_bath"}', 4),
-
--- Interaction Count Achievements
-('pat_10', 'Pat Master', 'Pat your pet 10 times', '🐾', 'interaction', 'common', '{"type": "counter", "stat": "total_pats", "value": 10}', 5),
-('pat_100', 'Century Petter', 'Pat your pet 100 times', '🎉', 'interaction', 'rare', '{"type": "counter", "stat": "total_pats", "value": 100}', 6),
-('feed_10', 'Foodie Master', 'Feed your pet 10 times', '🍖', 'interaction', 'common', '{"type": "counter", "stat": "total_feeds", "value": 10}', 7),
-('feed_50', 'Gourmet Chef', 'Feed your pet 50 times', '👨‍🍳', 'interaction', 'rare', '{"type": "counter", "stat": "total_feeds", "value": 50}', 8),
-('play_10', 'Playground Star', 'Play with your pet 10 times', '⭐', 'interaction', 'common', '{"type": "counter", "stat": "total_plays", "value": 10}', 9),
-('play_50', 'Fun Champion', 'Play with your pet 50 times', '🏆', 'interaction', 'rare', '{"type": "counter", "stat": "total_plays", "value": 50}', 10),
-('bath_5', 'Clean Machine', 'Bath your pet 5 times', '✨', 'interaction', 'common', '{"type": "counter", "stat": "total_baths", "value": 5}', 11),
-('bath_25', 'Squeaky Clean', 'Bath your pet 25 times', '🧼', 'interaction', 'rare', '{"type": "counter", "stat": "total_baths", "value": 25}', 12),
-
--- Stat Achievements
-('happy_pet', 'Happy Pet', 'Reach happiness level 85+', '😊', 'stats', 'common', '{"type": "stat", "stat": "happiness", "value": 85}', 13),
-('very_happy', 'Overjoyed', 'Reach happiness level 95+', '🤩', 'stats', 'rare', '{"type": "stat", "stat": "happiness", "value": 95}', 14),
-('healthy_buddy', 'Healthy Buddy', 'Reach health level 85+', '💚', 'stats', 'common', '{"type": "stat", "stat": "health", "value": 85}', 15),
-('peak_health', 'Peak Condition', 'Reach health level 95+', '🩺', 'stats', 'rare', '{"type": "stat", "stat": "health", "value": 95}', 16),
-('clean_pup', 'Squeaky Clean Pup', 'Reach cleanliness level 85+', '🌟', 'stats', 'common', '{"type": "stat", "stat": "cleanliness", "value": 85}', 17),
-('energizer', 'Energizer', 'Reach energy level 90+', '⚡', 'stats', 'common', '{"type": "stat", "stat": "energy", "value": 90}', 18),
-('affectionate', 'Affectionate Bond', 'Reach affection level 80+', '💞', 'stats', 'common', '{"type": "stat", "stat": "affection_level", "value": 80}', 19),
-('devoted', 'Devoted Companion', 'Reach affection level 95+', '👑', 'stats', 'rare', '{"type": "stat", "stat": "affection_level", "value": 95}', 20),
-
--- Combo Achievements
-('all_star', 'All Star Caretaker', 'Get all stats above 75', '⭐⭐⭐', 'combo', 'epic', '{"type": "all_stats", "value": 75}', 21),
-('perfect_pet', 'Perfect Pet Owner', 'Get all stats above 90', '👑✨', 'combo', 'legendary', '{"type": "all_stats", "value": 90}', 22),
-
--- Consecutive Days
-('7day_streak', '7-Day Companion', 'Interact with your pet for 7 consecutive days', '🔥', 'streak', 'rare', '{"type": "streak_days", "days": 7}', 23),
-('30day_streak', '30-Day Dedicated', 'Interact with your pet for 30 consecutive days', '💪', 'streak', 'epic', '{"type": "streak_days", "days": 30}', 24);
-
 CREATE TABLE public.relationships (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   partner1_id uuid,
@@ -289,4 +325,25 @@ CREATE TABLE public.relationships (
   CONSTRAINT relationships_pkey PRIMARY KEY (id),
   CONSTRAINT relationships_partner1_id_fkey FOREIGN KEY (partner1_id) REFERENCES public.profiles(id),
   CONSTRAINT relationships_partner2_id_fkey FOREIGN KEY (partner2_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.shared_goals (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  relationship_id uuid NOT NULL,
+  created_by uuid NOT NULL,
+  title text NOT NULL,
+  description text,
+  category text DEFAULT 'lifestyle'::text,
+  goal_type text DEFAULT 'habit'::text,
+  target_value numeric,
+  unit text,
+  frequency text,
+  start_date date NOT NULL,
+  end_date date,
+  status text DEFAULT 'active'::text,
+  completed_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT shared_goals_pkey PRIMARY KEY (id),
+  CONSTRAINT shared_goals_relationship_id_fkey FOREIGN KEY (relationship_id) REFERENCES public.relationships(id),
+  CONSTRAINT shared_goals_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
 );
