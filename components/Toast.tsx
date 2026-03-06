@@ -24,7 +24,7 @@ export default function Toast({ message, visible }: ToastProps) {
   return (
     <div
       className={`
-        absolute bottom-24 left-1/2 -translate-x-1/2 z-20
+        absolute bottom-48 left-1/2 -translate-x-1/2 z-20
         bg-white/90 backdrop-blur-sm border border-pink-200 
         rounded-2xl px-5 py-2.5 shadow-lg
         flex items-center gap-2
@@ -33,7 +33,9 @@ export default function Toast({ message, visible }: ToastProps) {
       `}
     >
       <span className="text-lg">🌸</span>
-      <span className="text-sm font-bold text-pink-500 font-kawaii">{message}</span>
+      <span className="text-sm font-bold text-pink-500 font-kawaii">
+        {message}
+      </span>
     </div>
   );
 }

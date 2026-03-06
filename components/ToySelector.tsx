@@ -36,7 +36,7 @@ export default function ToySelector({
   const toys = petKind === "cat" ? CAT_TOYS : DOG_TOYS;
 
   return (
-    <div className="absolute bottom-16 left-0 right-0 z-10 flex items-center justify-center px-4 pointer-events-none">
+    <div className="absolute bottom-24 left-0 right-0 z-10 flex items-center justify-center px-4 pointer-events-none">
       <div className="pointer-events-auto flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-2xl px-3 py-2 shadow-md border border-emerald-100">
         <span
           className="text-[10px] font-bold text-emerald-600 mr-1"
