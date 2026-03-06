@@ -60,7 +60,7 @@ export function RelationshipTimer({ startDate }: { startDate: string }) {
   }
 
   return (
-    <div className="w-full bg-linear-to-r from-rose-500 to-pink-600 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden group">
+    <div className="w-full bg-linear-to-r from-rose-500 to-pink-600 rounded-3xl p-4 sm:p-6 md:p-8 text-white shadow-xl relative overflow-hidden group">
       <div className="absolute top-0 left-0 w-full h-full bg-[url('/noise.png')] opacity-20" />
       <div className="absolute -right-10 -bottom-10 opacity-10 transform rotate-12 group-hover:scale-110 transition-transform duration-700">
         <Heart size={200} fill="currentColor" />
@@ -78,11 +78,11 @@ export function RelationshipTimer({ startDate }: { startDate: string }) {
       )}
 
       <div className="relative z-10 flex flex-col items-center">
-        <h2 className="text-xl md:text-2xl font-medium text-rose-100 mb-6 font-script">
+        <h2 className="text-base sm:text-lg md:text-2xl font-medium text-rose-100 mb-3 sm:mb-4 md:mb-6 font-script">
           We've been loving each other for
         </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-8 w-full max-w-4xl text-center">
+        <div className="grid grid-cols-5 gap-2 sm:gap-3 md:gap-4 lg:gap-8 w-full max-w-4xl text-center">
           <TimeUnit value={timeTogether.years} label="Years" />
           <TimeUnit value={timeTogether.days} label="Days" />
           <TimeUnit value={timeTogether.hours} label="Hours" />
@@ -91,7 +91,7 @@ export function RelationshipTimer({ startDate }: { startDate: string }) {
         </div>
 
         {/* Anniversary Date Display/Edit */}
-        <div className="mt-8 flex items-center gap-3 text-rose-200 text-sm">
+        <div className="mt-4 sm:mt-6 md:mt-8 flex items-center gap-2 sm:gap-3 text-rose-200 text-xs sm:text-sm">
           {isEditing ? (
             <div className="flex items-center gap-2">
               <span className="text-white">Since:</span>
@@ -99,15 +99,15 @@ export function RelationshipTimer({ startDate }: { startDate: string }) {
                 type="date"
                 value={editDate}
                 onChange={(e) => setEditDate(e.target.value)}
-                className="px-3 py-1.5 bg-white/20 border border-white/40 rounded-lg text-white backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="px-2 py-1 sm:px-3 sm:py-1.5 bg-white/20 border border-white/40 rounded-lg text-white text-xs sm:text-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/50"
                 disabled={isSaving}
               />
               <button
                 onClick={handleSaveDate}
                 disabled={isSaving}
-                className="p-1.5 bg-green-500 hover:bg-green-600 rounded-lg transition-colors disabled:opacity-50"
+                className="p-1 sm:p-1.5 bg-green-500 hover:bg-green-600 rounded-lg transition-colors disabled:opacity-50"
               >
-                <Check className="w-4 h-4" />
+                <Check className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
               <button
                 onClick={() => {
@@ -116,9 +116,9 @@ export function RelationshipTimer({ startDate }: { startDate: string }) {
                   setError("");
                 }}
                 disabled={isSaving}
-                className="p-1.5 bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-50"
+                className="p-1 sm:p-1.5 bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-50"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
             </div>
           ) : (
@@ -130,7 +130,7 @@ export function RelationshipTimer({ startDate }: { startDate: string }) {
         </div>
 
         {error && (
-          <p className="mt-2 text-sm text-red-200 bg-red-500/20 px-4 py-2 rounded-lg">
+          <p className="mt-2 text-xs sm:text-sm text-red-200 bg-red-500/20 px-3 sm:px-4 py-1 sm:py-2 rounded-lg">
             {error}
           </p>
         )}
@@ -141,11 +141,11 @@ export function RelationshipTimer({ startDate }: { startDate: string }) {
 
 function TimeUnit({ value, label }: { value: number; label: string }) {
   return (
-    <div className="flex flex-col items-center p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20">
-      <span className="text-3xl md:text-5xl font-bold font-mono tabular-nums leading-none mb-2">
+    <div className="flex flex-col items-center p-1.5 sm:p-2 md:p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20">
+      <span className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold font-mono tabular-nums leading-none mb-1 sm:mb-2">
         {value.toString().padStart(2, "0")}
       </span>
-      <span className="text-xs md:text-sm uppercase tracking-wider text-rose-200">
+      <span className="text-[0.65rem] sm:text-xs md:text-sm uppercase tracking-wider text-rose-200">
         {label}
       </span>
     </div>
