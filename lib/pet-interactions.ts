@@ -238,8 +238,6 @@ export async function updateDailyStats(
       updates.daily_feeds = (existingStats?.daily_feeds || 0) + 1;
     } else if (interactionType === "play") {
       updates.daily_plays = (existingStats?.daily_plays || 0) + 1;
-      // Each play session = 5 minutes (adjust as needed)
-      updates.play_time_minutes = (existingStats?.play_time_minutes || 0) + 5;
     } else if (interactionType === "bath") {
       updates.daily_baths = (existingStats?.daily_baths || 0) + 1;
     } else if (interactionType === "sleep") {
@@ -305,7 +303,6 @@ export async function getDailyStats(petId: string, date?: string) {
             daily_feeds: 0,
             daily_plays: 0,
             daily_baths: 0,
-            play_time_minutes: 0,
             sleep_hours: 0,
           },
         };

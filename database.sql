@@ -185,7 +185,6 @@ CREATE TABLE public.pet_daily_stats (
   daily_feeds integer DEFAULT 0,
   daily_plays integer DEFAULT 0,
   daily_baths integer DEFAULT 0,
-  play_time_minutes integer DEFAULT 0,
   sleep_hours numeric DEFAULT 0,
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),

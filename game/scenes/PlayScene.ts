@@ -15,6 +15,8 @@ export class PlayScene extends Phaser.Scene {
   private sparkleTimer?: Phaser.Time.TimerEvent;
   private isPlaying = false;
   private activeToy?: Phaser.GameObjects.Container;
+  private groundToys: Map<string, Phaser.GameObjects.Container> = new Map();
+  private laserPointer?: Phaser.GameObjects.Graphics;
 
   constructor() {
     super({ key: "PlayScene" });
@@ -33,6 +35,7 @@ export class PlayScene extends Phaser.Scene {
     this.drawToys(W, H);
     this.drawPet(W, H);
     this.startAmbientEffects(W, H);
+    this.enableTreatToss(W, H);
 
     this.isReady = true;
   }
@@ -184,78 +187,195 @@ export class PlayScene extends Phaser.Scene {
   // ─── Toys ──────────────────────────────────────────────────────────────────
 
   private drawToys(W: number, H: number) {
+    // Create interactive toys on the ground
+    this.createClickableBall(W * 0.25, H * 0.78);
+    this.createClickableYarn(W * 0.82, H * 0.82);
+    this.createClickableMouse(W * 0.38, H * 0.85);
+    this.createClickableBone(W * 0.15, H * 0.88);
+    this.createClickableFeather(W * 0.9, H * 0.55);
+
+    // Static decorative toys (non-interactive)
     const g = this.add.graphics();
 
-    // Ball on floor
-    g.fillStyle(0xff5555, 1);
-    g.fillCircle(W * 0.25, H * 0.78, 14);
-    g.fillStyle(0xffffff, 0.5);
-    g.fillCircle(W * 0.25 - 3, H * 0.78 - 4, 5);
-    // Ball stripe
-    g.lineStyle(2, 0xcc3333, 0.6);
-    g.beginPath();
-    g.arc(W * 0.25, H * 0.78, 12, -0.8, 0.8, false);
-    g.strokePath();
-
-    // Yarn ball
-    g.fillStyle(0xffaacc, 1);
-    g.fillCircle(W * 0.82, H * 0.82, 11);
-    g.lineStyle(1, 0xff88aa, 0.6);
-    g.beginPath();
-    g.arc(W * 0.82, H * 0.82, 8, 0, 2, false);
-    g.strokePath();
-    g.beginPath();
-    g.arc(W * 0.82, H * 0.82, 5, 1, 4, false);
-    g.strokePath();
-    // Yarn trail
-    g.lineStyle(1.5, 0xffaacc, 0.5);
-    g.beginPath();
-    g.moveTo(W * 0.82 + 11, H * 0.82);
-    g.lineTo(W * 0.82 + 20, H * 0.84);
-    g.lineTo(W * 0.82 + 15, H * 0.88);
-    g.strokePath();
-
-    // Mouse toy
-    g.fillStyle(0xaaaaaa, 1);
-    g.fillEllipse(W * 0.38, H * 0.85, 18, 10);
-    g.fillStyle(0xff9999, 1);
-    g.fillCircle(W * 0.38 - 8, H * 0.85 - 2, 4);
-    g.fillCircle(W * 0.38 - 4, H * 0.85 - 5, 4);
-    // Mouse tail
-    g.lineStyle(1, 0xaaaaaa, 0.6);
-    g.beginPath();
-    g.moveTo(W * 0.38 + 9, H * 0.85);
-    g.lineTo(W * 0.38 + 18, H * 0.83);
-    g.lineTo(W * 0.38 + 22, H * 0.86);
-    g.strokePath();
-
-    // Bone toy (for dogs)
-    g.fillStyle(0xf5e6d3, 1);
-    g.fillRoundedRect(W * 0.15, H * 0.88, 30, 8, 3);
-    g.fillCircle(W * 0.15, H * 0.892, 6);
-    g.fillCircle(W * 0.15 + 30, H * 0.892, 6);
-
-    // Feather wand leaning against wall
+    // Feather wand leaning against wall (static)
     g.lineStyle(2, 0xc8a060, 1);
-    g.lineBetween(W * 0.9, H * 0.4, W * 0.88, H * 0.7);
+    g.lineBetween(W * 0.91, H * 0.4, W * 0.89, H * 0.7);
     g.fillStyle(0xff6688, 0.8);
     g.fillTriangle(
-      W * 0.9,
+      W * 0.91,
       H * 0.4,
-      W * 0.9 - 6,
+      W * 0.91 - 6,
       H * 0.4 - 18,
-      W * 0.9 + 6,
+      W * 0.91 + 6,
       H * 0.4 - 14,
     );
     g.fillStyle(0xffaacc, 0.6);
     g.fillTriangle(
-      W * 0.9 - 3,
+      W * 0.91 - 3,
       H * 0.4 - 14,
-      W * 0.9 - 10,
+      W * 0.91 - 10,
       H * 0.4 - 28,
-      W * 0.9 + 2,
+      W * 0.91 + 2,
       H * 0.4 - 22,
     );
+  }
+
+  private createClickableBall(x: number, y: number) {
+    const ball = this.add.container(x, y);
+    const g = this.add.graphics();
+    g.fillStyle(0xff5555, 1);
+    g.fillCircle(0, 0, 14);
+    g.fillStyle(0xffffff, 0.5);
+    g.fillCircle(-3, -4, 5);
+    g.lineStyle(2, 0xcc3333, 0.6);
+    g.beginPath();
+    g.arc(0, 0, 12, -0.8, 0.8, false);
+    g.strokePath();
+    ball.add(g);
+
+    g.setInteractive(new Phaser.Geom.Circle(0, 0, 16), Phaser.Geom.Circle.Contains);
+    g.on("pointerover", () => {
+      this.game.canvas.style.cursor = "pointer";
+      ball.setScale(1.15);
+    });
+    g.on("pointerout", () => {
+      this.game.canvas.style.cursor = "default";
+      ball.setScale(1);
+    });
+    g.on("pointerdown", () => {
+      if (!this.isPlaying) this.playWith("ball");
+    });
+
+    this.groundToys.set("ball", ball);
+  }
+
+  private createClickableYarn(x: number, y: number) {
+    const yarn = this.add.container(x, y);
+    const g = this.add.graphics();
+    g.fillStyle(0xffaacc, 1);
+    g.fillCircle(0, 0, 11);
+    g.lineStyle(1, 0xff88aa, 0.6);
+    g.beginPath();
+    g.arc(0, 0, 8, 0, 2, false);
+    g.strokePath();
+    g.beginPath();
+    g.arc(0, 0, 5, 1, 4, false);
+    g.strokePath();
+    // Yarn trail
+    g.lineStyle(1.5, 0xffaacc, 0.5);
+    g.beginPath();
+    g.moveTo(11, 0);
+    g.lineTo(20, 2);
+    g.lineTo(15, 6);
+    g.strokePath();
+    yarn.add(g);
+
+    g.setInteractive(new Phaser.Geom.Circle(0, 0, 13), Phaser.Geom.Circle.Contains);
+    g.on("pointerover", () => {
+      this.game.canvas.style.cursor = "pointer";
+      yarn.setScale(1.15);
+    });
+    g.on("pointerout", () => {
+      this.game.canvas.style.cursor = "default";
+      yarn.setScale(1);
+    });
+    g.on("pointerdown", () => {
+      if (!this.isPlaying) this.playWith("yarn");
+    });
+
+    this.groundToys.set("yarn", yarn);
+  }
+
+  private createClickableMouse(x: number, y: number) {
+    const mouse = this.add.container(x, y);
+    const g = this.add.graphics();
+    g.fillStyle(0xaaaaaa, 1);
+    g.fillEllipse(0, 0, 18, 10);
+    g.fillStyle(0xff9999, 1);
+    g.fillCircle(-8, -2, 4);
+    g.fillCircle(-4, -5, 4);
+    // Mouse tail
+    g.lineStyle(1, 0xaaaaaa, 0.6);
+    g.beginPath();
+    g.moveTo(9, 0);
+    g.lineTo(18, -2);
+    g.lineTo(22, 1);
+    g.strokePath();
+    mouse.add(g);
+
+    g.setInteractive(new Phaser.Geom.Ellipse(0, 0, 20, 12), Phaser.Geom.Ellipse.Contains);
+    g.on("pointerover", () => {
+      this.game.canvas.style.cursor = "pointer";
+      mouse.setScale(1.15);
+    });
+    g.on("pointerout", () => {
+      this.game.canvas.style.cursor = "default";
+      mouse.setScale(1);
+    });
+    g.on("pointerdown", () => {
+      if (!this.isPlaying) {
+        // Mouse toy makes pet pounce
+        this.playWith("yarn"); // Reuse yarn animation
+      }
+    });
+
+    this.groundToys.set("mouse", mouse);
+  }
+
+  private createClickableBone(x: number, y: number) {
+    const bone = this.add.container(x, y);
+    const g = this.add.graphics();
+    g.fillStyle(0xf5e6d3, 1);
+    g.fillRoundedRect(0, 0, 30, 8, 3);
+    g.fillCircle(0, 4, 6);
+    g.fillCircle(30, 4, 6);
+    bone.add(g);
+
+    g.setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 8), Phaser.Geom.Rectangle.Contains);
+    g.on("pointerover", () => {
+      this.game.canvas.style.cursor = "pointer";
+      bone.setScale(1.15);
+    });
+    g.on("pointerout", () => {
+      this.game.canvas.style.cursor = "default";
+      bone.setScale(1);
+    });
+    g.on("pointerdown", () => {
+      if (!this.isPlaying && this.currentPetKind === "dog") {
+        this.playWith("bone");
+      }
+    });
+
+    this.groundToys.set("bone", bone);
+  }
+
+  private createClickableFeather(x: number, y: number) {
+    const feather = this.add.container(x, y);
+    const g = this.add.graphics();
+    g.fillStyle(0xff6688, 0.8);
+    g.fillTriangle(0, 0, -5, -18, 5, -14);
+    g.fillStyle(0xffaacc, 0.6);
+    g.fillTriangle(-2, -14, -8, -26, 2, -20);
+    g.lineStyle(1, 0xc8a060, 0.8);
+    g.lineBetween(0, 0, 0, 20);
+    feather.add(g);
+
+    g.setInteractive(new Phaser.Geom.Circle(0, -10, 20), Phaser.Geom.Circle.Contains);
+    g.on("pointerover", () => {
+      this.game.canvas.style.cursor = "pointer";
+      feather.setScale(1.15);
+    });
+    g.on("pointerout", () => {
+      this.game.canvas.style.cursor = "default";
+      feather.setScale(1);
+    });
+    g.on("pointerdown", () => {
+      if (!this.isPlaying && this.currentPetKind === "cat") {
+        this.playWith("feather");
+      }
+    });
+
+    this.groundToys.set("feather", feather);
   }
 
   // ─── Pet ───────────────────────────────────────────────────────────────────
@@ -306,38 +426,14 @@ export class PlayScene extends Phaser.Scene {
       this.game.canvas.style.cursor = "default";
     });
     this.petBody.on("pointerdown", () => {
+      if (this.isPlaying) return;
+      
+      // Random pet tricks when clicked
+      const tricks = ["jump", "spin", "wiggle", "bounce"];
+      const trick = tricks[Math.floor(Math.random() * tricks.length)];
+      
+      this.performTrick(trick);
       this.events.emit("petPlayed", "pat");
-      this.tweens.add({
-        targets: this.pet,
-        y: this.pet.y - 25,
-        duration: 200,
-        yoyo: true,
-        ease: "Back.easeOut",
-      });
-      // Excited emojis
-      const emojis =
-        this.currentPetKind === "cat"
-          ? ["\uD83C\uDF1F", "\u2728", "\uD83D\uDC95", "\uD83C\uDF89"]
-          : ["\uD83C\uDF1F", "\uD83D\uDC3E", "\uD83D\uDC95", "\uD83C\uDF89"];
-      for (let i = 0; i < 4; i++) {
-        this.time.delayedCall(i * 80, () => {
-          const e = emojis[Math.floor(Math.random() * emojis.length)];
-          const heart = this.add.text(
-            this.pet.x + Phaser.Math.Between(-35, 35),
-            this.pet.y - 55,
-            e,
-            { fontSize: "18px" },
-          );
-          this.tweens.add({
-            targets: heart,
-            y: heart.y - 60,
-            alpha: 0,
-            duration: 1000,
-            ease: "Power2",
-            onComplete: () => heart.destroy(),
-          });
-        });
-      }
     });
   }
 
@@ -354,6 +450,87 @@ export class PlayScene extends Phaser.Scene {
         this.petTail,
         this.currentPetBreed as DogType,
       );
+    }
+  }
+
+  // ─── Pet Tricks (Direct Interactions) ─────────────────────────────────────
+
+  private performTrick(trick: string) {
+    const emojis =
+      this.currentPetKind === "cat"
+        ? ["🌟", "✨", "💕", "🎉"]
+        : ["🌟", "🐾", "💕", "🎉"];
+
+    switch (trick) {
+      case "jump":
+        this.tweens.add({
+          targets: this.pet,
+          y: this.pet.y - 40,
+          duration: 250,
+          yoyo: true,
+          ease: "Back.easeOut",
+        });
+        this.showPlayReaction("Boing!");
+        break;
+
+      case "spin":
+        this.tweens.add({
+          targets: this.pet,
+          rotation: this.pet.rotation + Math.PI * 2,
+          duration: 500,
+          ease: "Power2",
+          onComplete: () => {
+            this.pet.rotation = 0; // Reset rotation
+          },
+        });
+        this.showPlayReaction("Spin!");
+        break;
+
+      case "wiggle":
+        this.tweens.add({
+          targets: this.pet,
+          x: this.pet.x + 10,
+          duration: 100,
+          yoyo: true,
+          repeat: 3,
+          ease: "Linear",
+        });
+        this.showPlayReaction("Wiggle!");
+        break;
+
+      case "bounce":
+        this.tweens.add({
+          targets: this.pet,
+          scaleX: { from: 1, to: 1.15 },
+          scaleY: { from: 1, to: 0.85 },
+          duration: 150,
+          yoyo: true,
+          repeat: 2,
+          ease: "Sine.easeInOut",
+        });
+        this.showPlayReaction("Bounce!");
+        break;
+    }
+
+    // Show excited emojis
+    for (let i = 0; i < 4; i++) {
+      this.time.delayedCall(i * 80, () => {
+        const e = emojis[Math.floor(Math.random() * emojis.length)];
+        const heart = this.add.text(
+          this.pet.x + Phaser.Math.Between(-35, 35),
+          this.pet.y - 55,
+          e,
+          { fontSize: "18px" },
+        );
+        this.tweens.add({
+          targets: heart,
+          y: heart.y - 60,
+          alpha: 0,
+          duration: 1000,
+          ease: "Power2",
+          onComplete: () => heart.destroy(),
+        });
+      });
     }
   }
 
@@ -771,6 +948,170 @@ export class PlayScene extends Phaser.Scene {
         });
       },
     });
+  }
+
+  // ─── Interactive Features ──────────────────────────────────────────────────
+
+  private enableTreatToss(W: number, H: number) {
+    // Click anywhere on the background to toss a treat
+    const zone = this.add.zone(0, 0, W, H).setOrigin(0);
+    zone.setInteractive();
+    
+    zone.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      if (this.isPlaying) return;
+      
+      // Don't trigger if clicking on a toy or pet
+      const clickedOnToy = Array.from(this.groundToys.values()).some(toy => {
+        const bounds = toy.getBounds();
+        return bounds.contains(pointer.x, pointer.y);
+      });
+      
+      const petBounds = this.pet.getBounds();
+      if (clickedOnToy || petBounds.contains(pointer.x, pointer.y)) {
+        return;
+      }
+      
+      // Toss a treat!
+      this.tossTreat(pointer.x, pointer.y);
+    });
+  }
+
+  private tossTreat(targetX: number, targetY: number) {
+    const W = this.scale.width;
+    const H = this.scale.height;
+    
+    // Create treat
+    const treat = this.add.container(W * 0.5, H * 0.2);
+    const treatG = this.add.graphics();
+    treatG.fillStyle(0xffcc77, 1);
+    treatG.fillCircle(0, 0, 8);
+    treatG.fillStyle(0xffaa55, 1);
+    treatG.fillCircle(-2, -2, 3);
+    treatG.fillCircle(2, 1, 2);
+    treat.add(treatG);
+    
+    // Animate treat falling
+    this.tweens.add({
+      targets: treat,
+      x: targetX,
+      y: targetY,
+      duration: 600,
+      ease: "Power2",
+      onComplete: () => {
+        // Pet runs to get treat
+        this.isPlaying = true;
+        this.tweens.add({
+          targets: this.pet,
+          x: targetX,
+          y: targetY - 20,
+          duration: 400,
+          ease: "Power2",
+          onComplete: () => {
+            // Pet eats treat
+            treat.destroy();
+            this.tweens.add({
+              targets: this.pet,
+              scaleX: { from: 1, to: 1.1 },
+              scaleY: { from: 1, to: 0.9 },
+              duration: 150,
+              yoyo: true,
+              repeat: 1,
+            });
+            
+            // Show reaction
+            const reactions = ["Yum!", "Nom nom!", "Tasty!", "Delicious!"];
+            this.showPlayReaction(reactions[Math.floor(Math.random() * reactions.length)]);
+            
+            // Hearts
+            for (let i = 0; i < 3; i++) {
+              this.time.delayedCall(i * 100, () => {
+                const heart = this.add.text(
+                  this.pet.x + Phaser.Math.Between(-25, 25),
+                  this.pet.y - 50,
+                  "💕",
+                  { fontSize: "16px" },
+                );
+                this.tweens.add({
+                  targets: heart,
+                  y: heart.y - 40,
+                  alpha: 0,
+                  duration: 800,
+                  onComplete: () => heart.destroy(),
+                });
+              });
+            }
+            
+            // Return to center
+            this.time.delayedCall(800, () => {
+              this.tweens.add({
+                targets: this.pet,
+                x: W * 0.5,
+                y: H * 0.56,
+                duration: 500,
+                ease: "Power2",
+                onComplete: () => {
+                  this.isPlaying = false;
+                  this.events.emit("petPlayed", "treat");
+                },
+              });
+            });
+          },
+        });
+      },
+    });
+    
+    // Rotate treat as it falls
+    this.tweens.add({
+      targets: treatG,
+      rotation: Math.PI * 2,
+      duration: 600,
+      ease: "Linear",
+    });
+  }
+
+  public enableLaserPointer() {
+    if (this.laserPointer) return;
+    
+    // Create laser dot
+    this.laserPointer = this.add.graphics();
+    this.laserPointer.fillStyle(0xff0000, 0.9);
+    this.laserPointer.fillCircle(0, 0, 5);
+    this.laserPointer.fillStyle(0xff6666, 0.6);
+    this.laserPointer.fillCircle(0, 0, 8);
+    this.laserPointer.setVisible(false);
+    
+    // Follow mouse
+    this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
+      if (this.laserPointer && this.laserPointer.visible) {
+        this.laserPointer.setPosition(pointer.x, pointer.y);
+        
+        // Pet chases laser (if not playing)
+        if (!this.isPlaying && Phaser.Math.Distance.Between(
+          this.pet.x,
+          this.pet.y,
+          pointer.x,
+          pointer.y,
+        ) > 40) {
+          this.tweens.add({
+            targets: this.pet,
+            x: pointer.x + Phaser.Math.Between(-30, 30),
+            y: pointer.y + Phaser.Math.Between(-30, 30),
+            duration: 300,
+            ease: "Power2",
+          });
+        }
+      }
+    });
+    
+    this.laserPointer.setVisible(true);
+    this.showPlayReaction("Laser mode!");
+  }
+
+  public disableLaserPointer() {
+    if (this.laserPointer) {
+      this.laserPointer.destroy();
+      this.laserPointer = undefined;
+    }
   }
 
   // ─── Public API ────────────────────────────────────────────────────────────

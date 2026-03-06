@@ -10,7 +10,6 @@ interface DailyStats {
   daily_feeds: number;
   daily_plays: number;
   daily_baths: number;
-  play_time_minutes: number;
   sleep_hours: number;
 }
 
@@ -64,10 +63,9 @@ export default function PetDailyStatsCard({
       feeds: acc.feeds + (day.daily_feeds || 0),
       plays: acc.plays + (day.daily_plays || 0),
       baths: acc.baths + (day.daily_baths || 0),
-      playTime: acc.playTime + (day.play_time_minutes || 0),
       sleepHours: acc.sleepHours + (day.sleep_hours || 0),
     }),
-    { pats: 0, feeds: 0, plays: 0, baths: 0, playTime: 0, sleepHours: 0 },
+    { pats: 0, feeds: 0, plays: 0, baths: 0, sleepHours: 0 },
   );
 
   return (
@@ -103,11 +101,6 @@ export default function PetDailyStatsCard({
             emoji="🛁"
           />
           <StatItem
-            label="Play time"
-            value={`${todayStats?.play_time_minutes || 0}m`}
-            emoji="⏱️"
-          />
-          <StatItem
             label="Sleep"
             value={`${todayStats?.sleep_hours || 0}h`}
             emoji="💤"
@@ -125,11 +118,6 @@ export default function PetDailyStatsCard({
           <StatItem label="Total Feeds" value={weeklyTotals.feeds} emoji="🍖" />
           <StatItem label="Total Plays" value={weeklyTotals.plays} emoji="🎮" />
           <StatItem label="Total Baths" value={weeklyTotals.baths} emoji="🛁" />
-          <StatItem
-            label="Play time"
-            value={`${weeklyTotals.playTime}m`}
-            emoji="⏱️"
-          />
           <StatItem
             label="Sleep"
             value={`${weeklyTotals.sleepHours}h`}
