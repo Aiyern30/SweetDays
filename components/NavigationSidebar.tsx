@@ -12,9 +12,10 @@ import {
   Menu,
   LogOut,
   User,
+  Gamepad2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { createClient } from "@/lib/supabase/client";
 
 const navigation = [
@@ -23,6 +24,7 @@ const navigation = [
   { name: "Milestones", href: "/milestones", icon: Heart },
   { name: "Confessions", href: "/confessions", icon: MessageCircle },
   { name: "Diaries", href: "/diaries", icon: BookOpen },
+  { name: "Game", href: "/game", icon: Gamepad2 },
   { name: "Profile", href: "/profile", icon: User },
 ];
 
@@ -123,20 +125,20 @@ export function NavigationSidebar({ children }: NavigationSidebarProps) {
     <>
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <DrawerTrigger asChild>
+        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <SheetTrigger asChild>
             <button className="p-2 rounded-lg bg-white dark:bg-zinc-800 shadow-lg border border-gray-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors">
               <Menu className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </button>
-          </DrawerTrigger>
-          <DrawerContent className="h-[85vh]">
+          </SheetTrigger>
+          <SheetContent side="left" className="w-64 p-0">
             <SidebarContent
               mobile
               pathname={pathname}
               setSidebarOpen={setMobileMenuOpen}
             />
-          </DrawerContent>
-        </Drawer>
+          </SheetContent>
+        </Sheet>
       </div>
 
       <div className="lg:flex lg:min-h-screen">
