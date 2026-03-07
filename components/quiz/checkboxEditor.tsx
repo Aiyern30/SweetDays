@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChoiceOption } from "@/types/quiz";
@@ -11,7 +11,7 @@ const KEYS = ["A", "B", "C", "D", "E", "F"];
 interface CheckboxesEditorProps {
   options: ChoiceOption[];
   correctOption: string; // comma-separated keys e.g. "A,C"
-  onChange: (opts: ChoiceOption[]) => void;
+  onChange: (opts: ChoiceOption[], newCorrect?: string) => void;
   onCorrectChange: (val: string) => void;
 }
 
@@ -25,26 +25,6 @@ export function CheckboxesEditor({
     () => (correctOption ? correctOption.split(",") : []),
     [correctOption],
   );
-  useEffect(() => {
-    const isSequential = options.every((opt, idx) => opt.key === KEYS[idx]);
-    if (isSequential) return;
-
-    const keyMap = new Map<string, string>();
-    const normalized = options.map((opt, idx) => {
-      const newKey = KEYS[idx];
-      keyMap.set(opt.key, newKey);
-      return { ...opt, key: newKey };
-    });
-
-    onChange(normalized);
-
-    if (selected.length > 0) {
-      const remappedSelected = selected
-        .map((k) => keyMap.get(k))
-        .filter((k): k is string => Boolean(k));
-      onCorrectChange(remappedSelected.join(","));
-    }
-  }, [options, selected, onChange, onCorrectChange]);
 
   const toggleSelected = (key: string) => {
     const next = selected.includes(key)
@@ -73,13 +53,11 @@ export function CheckboxesEditor({
       return { ...opt, key: newKey };
     });
 
-    onChange(normalized);
-
     const remappedSelected = selected
       .filter((k) => k !== removedKey)
       .map((k) => keyMap.get(k))
       .filter((k): k is string => Boolean(k));
-    onCorrectChange(remappedSelected.join(","));
+    onChange(normalized, remappedSelected.join(","));
   };
 
   return (

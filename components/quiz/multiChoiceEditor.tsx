@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { ChoiceOption } from "@/types/quiz";
 import { Plus } from "lucide-react";
 import { SectionLabel, OptionInput } from "./sharedUI";
@@ -10,7 +9,7 @@ const KEYS = ["A", "B", "C", "D", "E", "F"];
 interface MultipleChoiceEditorProps {
   options: ChoiceOption[];
   correctOption: string; // single key e.g. "A"
-  onChange: (opts: ChoiceOption[]) => void;
+  onChange: (opts: ChoiceOption[], newCorrect?: string) => void;
   onCorrectChange: (key: string) => void;
 }
 
@@ -20,24 +19,6 @@ export function MultipleChoiceEditor({
   onChange,
   onCorrectChange,
 }: MultipleChoiceEditorProps) {
-  useEffect(() => {
-    const isSequential = options.every((opt, idx) => opt.key === KEYS[idx]);
-    if (isSequential) return;
-
-    const keyMap = new Map<string, string>();
-    const normalized = options.map((opt, idx) => {
-      const newKey = KEYS[idx];
-      keyMap.set(opt.key, newKey);
-      return { ...opt, key: newKey };
-    });
-
-    onChange(normalized);
-
-    if (correctOption) {
-      onCorrectChange(keyMap.get(correctOption) ?? normalized[0]?.key ?? "");
-    }
-  }, [options, correctOption, onChange, onCorrectChange]);
-
   const updateLabel = (idx: number, label: string) =>
     onChange(options.map((o, i) => (i === idx ? { ...o, label } : o)));
 
@@ -58,15 +39,16 @@ export function MultipleChoiceEditor({
       return { ...opt, key: newKey };
     });
 
-    onChange(normalized);
-
-    if (!correctOption) return;
+    if (!correctOption) {
+      onChange(normalized);
+      return;
+    }
     if (correctOption === removedKey) {
-      onCorrectChange(normalized[0]?.key ?? "");
+      onChange(normalized, normalized[0]?.key ?? "");
       return;
     }
 
-    onCorrectChange(keyMap.get(correctOption) ?? normalized[0]?.key ?? "");
+    onChange(normalized, keyMap.get(correctOption) ?? normalized[0]?.key ?? "");
   };
 
   return (
