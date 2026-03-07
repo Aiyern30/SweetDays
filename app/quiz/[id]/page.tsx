@@ -1,7 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { QuizBuilder } from "@/components/quiz/QuizBuilder";
 import { Question } from "@/types/quiz";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Lock } from "lucide-react";
 
 export default async function EditQuizPage({
   params,
@@ -16,7 +19,10 @@ export default async function EditQuizPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return notFound();
+  if (!user) {
+    // If not logged in, redirect to home page or login
+    redirect("/auth/login"); // or "/" if there's no auth/login
+  }
 
   // Fetch the session
   const { data: session } = await supabase
@@ -26,6 +32,32 @@ export default async function EditQuizPage({
     .single();
 
   if (!session) return notFound();
+
+  // Enforce only creator can edit
+  if (session.created_by !== user.id) {
+    return (
+      <div className="min-h-screen pt-20 px-4 flex justify-center bg-rose-50/30">
+        <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl shadow-rose-200/50 text-center border border-rose-100">
+          <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Lock className="text-rose-500 w-8 h-8" />
+          </div>
+          <h2 className="text-2xl font-bold text-rose-900 mb-3">
+            Access Denied
+          </h2>
+          <p className="text-rose-600 mb-8">
+            This quiz was created by your partner. Only the creator can edit
+            this quiz!
+          </p>
+          <Link href="/quiz">
+            <Button className="w-full bg-pink-600 hover:bg-pink-500 text-white shadow-lg shadow-pink-900/20">
+              <ArrowLeft className="mr-2 w-4 h-4" />
+              Back to Dashboard
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   // Fetch questions
   const { data: questions } = await supabase
