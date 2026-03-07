@@ -4,6 +4,15 @@ import { createClient } from "@/lib/supabase/server";
 import { Question } from "@/types/quiz";
 import { revalidatePath } from "next/cache";
 
+// Type definitions for quiz lists
+export type QuizSession = {
+  id: string;
+  title: string;
+  status: string;
+  created_at: string;
+  total_questions: number;
+};
+
 export async function submitQuiz(
   title: string,
   questions: Question[],
@@ -11,7 +20,6 @@ export async function submitQuiz(
 ) {
   try {
     const supabase = await createClient();
-
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -20,7 +28,6 @@ export async function submitQuiz(
       throw new Error("You must be logged in to create a quiz");
     }
 
-    // Get user's active relationship
     const { data: relationshipData } = await supabase
       .from("relationships")
       .select("id")
@@ -32,7 +39,6 @@ export async function submitQuiz(
       throw new Error("No active relationship found");
     }
 
-    // Create quiz session
     const { data: session, error: sessionError } = await supabase
       .from("quiz_sessions")
       .insert({
@@ -49,13 +55,12 @@ export async function submitQuiz(
       throw new Error(`Failed to create quiz session: ${sessionError.message}`);
     }
 
-    // Create questions
     const questionsToInsert = questions.map((q, i) => ({
       session_id: session.id,
       created_by: user.id,
       question_text: q.question_text,
       question_type: q.question_type,
-      options: q.options, // JsonB handles standard objects correctly
+      options: q.options,
       correct_option: q.correct_option,
       display_order: i,
     }));
@@ -70,10 +75,60 @@ export async function submitQuiz(
       );
     }
 
-    revalidatePath("/quiz"); // Refresh whatever endpoints might be listing quizzes
+    revalidatePath("/quiz");
     return { success: true, sessionId: session.id };
   } catch (error: any) {
     console.error("Quiz submission error:", error);
     return { success: false, error: error.message || "Failed to submit quiz" };
+  }
+}
+
+export async function getQuizzes() {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return { success: false, error: "Not logged in" };
+
+    const { data: relationshipData } = await supabase
+      .from("relationships")
+      .select("id")
+      .or(`partner1_id.eq.${user.id},partner2_id.eq.${user.id}`)
+      .eq("status", "active")
+      .single();
+
+    if (!relationshipData)
+      return { success: false, error: "No active relationship" };
+
+    const { data, error } = await supabase
+      .from("quiz_sessions")
+      .select("id, title, status, created_at, total_questions")
+      .eq("relationship_id", relationshipData.id)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    return { success: true, quizzes: data as QuizSession[] };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deleteQuiz(id: string) {
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from("quiz_sessions")
+      .delete()
+      .eq("id", id);
+
+    if (error) throw error;
+
+    revalidatePath("/quiz");
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
 }
