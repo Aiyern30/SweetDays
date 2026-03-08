@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Heart, Plus, Users } from "lucide-react";
 import { DashboardQuizCard } from "@/components/quiz/DashboardQuizCard";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -39,30 +40,20 @@ export default async function QuizDashboard() {
         <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-violet-600/8 blur-[100px] rounded-full" />
       </div>
 
-      <div className="relative max-w-3xl mx-auto px-4 py-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Heart size={16} className="text-pink-500" fill="currentColor" />
-              <span className="text-xs text-rose-500 uppercase tracking-widest font-medium">
-                双人默契大比拼
-              </span>
-            </div>
-            <h1 className="text-3xl font-bold tracking-tight mb-1">
-              Your Quizzes
-            </h1>
-            <p className="text-rose-600 text-sm">
-              Manage your created quizzes or start a new challenge!
-            </p>
-          </div>
-
-          <Link href="/quiz/new">
-            <Button className="bg-pink-600 hover:bg-pink-500 text-white shadow-lg shadow-pink-900/20 w-full md:w-auto">
-              <Plus size={16} className="mr-2" />
-              Create Quiz
-            </Button>
-          </Link>
-        </div>
+      <div className="relative max-w-4xl mx-auto px-4 py-10">
+        <SectionHeader
+          icon={<Heart className="w-6 h-6 text-white" />}
+          title="Your Quizzes"
+          description={"Manage your created quizzes or start a new challenge!"}
+          button={
+            <Link href="/quiz/new">
+              <Button className="bg-pink-600 hover:bg-pink-500 text-white shadow-lg shadow-pink-900/20 w-full md:w-auto">
+                <Plus size={16} className="mr-2" />
+                Create Quiz
+              </Button>
+            </Link>
+          }
+        />
 
         {!success ? (
           <div className="p-4 bg-red-50 text-red-600 rounded-xl border border-red-200">
@@ -89,7 +80,7 @@ export default async function QuizDashboard() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-12">
+          <div className="space-y-12 pt-8">
             {/* Own Quizzes Section */}
             <div>
               <div className="flex items-center gap-2 mb-6">

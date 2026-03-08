@@ -188,13 +188,6 @@ export function DashboardQuizCard({
               </div>
             )}
           </div>
-
-          {isCreator && !isCompleted && !isDraft && (
-            <div className="flex items-center gap-1.5 justify-center text-[10px] text-rose-400 font-bold uppercase tracking-wider bg-rose-50/50 py-1 rounded-md border border-rose-100/50">
-              <Users size={10} />
-              Waiting for Partner
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>
