@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { Question } from "@/types/quiz";
 import { revalidatePath } from "next/cache";
 
@@ -216,7 +216,7 @@ export async function submitQuizResponses(
       throw new Error("You must be logged in to answer a quiz");
     }
 
-    // Check if already answered
+    // Check if already answered - check both score AND existing responses
     const { data: session } = await supabase
       .from("quiz_sessions")
       .select("match_score")
@@ -227,6 +227,16 @@ export async function submitQuizResponses(
       throw new Error(
         "You have already answered this quiz. Answers cannot be changed.",
       );
+    }
+
+    const { count: existingRespCount } = await supabase
+      .from("quiz_responses")
+      .select("*", { count: "exact", head: true })
+      .eq("session_id", sessionId)
+      .eq("answered_by", user.id);
+
+    if (existingRespCount && existingRespCount > 0) {
+      throw new Error("You have already submitted answers for this quiz.");
     }
 
     // Fetch questions to calculate if match
@@ -270,13 +280,15 @@ export async function submitQuizResponses(
     const matchScore =
       questions.length > 0 ? (matchCount / questions.length) * 100 : 0;
 
-    // Update match score and status
-    const { error: updateError } = await supabase
+    // Update match score and status using ADMIN client to bypass RLS
+    // Partners usually don't have update permission on sessions they didn't create
+    const adminSupabase = await createAdminClient();
+    const { error: updateError } = await adminSupabase
       .from("quiz_sessions")
       .update({
         match_score: matchScore,
         completed_at: new Date().toISOString(),
-        status: "published", // Ensure it's not draft anymore
+        status: "completed",
       })
       .eq("id", sessionId);
 
@@ -286,8 +298,8 @@ export async function submitQuizResponses(
     }
 
     // Force revalidation for the specific quiz and the dashboard
-    revalidatePath("/quiz", "page");
-    revalidatePath(`/quiz/${sessionId}`, "page");
+    revalidatePath("/quiz", "layout");
+    revalidatePath(`/quiz/${sessionId}`, "layout");
 
     return { success: true, matchScore };
   } catch (error: any) {

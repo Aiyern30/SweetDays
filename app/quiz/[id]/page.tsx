@@ -44,14 +44,17 @@ export default async function EditQuizPage({
     .eq("session_id", id)
     .eq("answered_by", user.id);
 
-  // If quiz is completed (score is set) OR user has already submitted answers, show results
-  if (session.match_score !== null || (responseCount && responseCount > 0)) {
+  // If quiz is completed (status or score set) OR user has already submitted answers, show results
+  if (
+    session.status === "completed" ||
+    session.match_score !== null ||
+    (responseCount && responseCount > 0)
+  ) {
     const results = await getQuizResults(id);
     if (results.success) {
       return <QuizResults quiz={results as any} userId={user.id} />;
     }
   }
-
   // If draft, only creator can see
   if (session.created_by !== user.id && session.status === "draft") {
     return (

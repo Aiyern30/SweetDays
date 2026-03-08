@@ -102,9 +102,11 @@ export default async function QuizDashboard() {
                             {quiz.title}
                           </h3>
                           <div className="flex items-center gap-1.5 shrink-0 ml-4">
-                            {quiz.match_score !== null ? (
+                            {quiz.match_score !== null || quiz.completed_at ? (
                               <span className="px-2 py-0.5 rounded-full bg-pink-500 text-white text-[10px] uppercase tracking-wider font-bold shadow-sm">
-                                {Math.round(quiz.match_score)}% Score
+                                {quiz.match_score !== null
+                                  ? `${Math.round(quiz.match_score)}% Score`
+                                  : "Completed"}
                               </span>
                             ) : quiz.status === "draft" ? (
                               <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-600 text-[10px] uppercase tracking-wider font-semibold">
@@ -136,7 +138,8 @@ export default async function QuizDashboard() {
                                 className="w-full bg-rose-50 text-rose-700 hover:bg-rose-100"
                                 size="sm"
                               >
-                                {quiz.match_score !== null ||
+                                {quiz.status === "completed" ||
+                                quiz.match_score !== null ||
                                 quiz.completed_at ? (
                                   <>
                                     <Play size={13} className="mr-1.5" /> View
@@ -155,9 +158,10 @@ export default async function QuizDashboard() {
                                 )}
                               </Button>
                             </Link>
-                            {quiz.match_score === null && (
-                              <QuizDeleteButton id={quiz.id} />
-                            )}
+                            {quiz.match_score === null &&
+                              !quiz.completed_at && (
+                                <QuizDeleteButton id={quiz.id} />
+                              )}
                           </div>
                         </div>
                       </CardContent>
@@ -196,9 +200,13 @@ export default async function QuizDashboard() {
                             {quiz.title}
                           </h3>
                           <div className="flex items-center gap-1.5 shrink-0 ml-4">
-                            {quiz.match_score !== null ? (
+                            {quiz.status === "completed" ||
+                            quiz.match_score !== null ||
+                            quiz.completed_at ? (
                               <span className="px-2 py-0.5 rounded-full bg-violet-500 text-white text-[10px] uppercase tracking-wider font-bold shadow-sm">
-                                {Math.round(quiz.match_score)}% Score
+                                {quiz.match_score !== null
+                                  ? `${Math.round(quiz.match_score)}% Score`
+                                  : "Completed"}
                               </span>
                             ) : quiz.status === "draft" ? (
                               <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] uppercase tracking-wider font-semibold">
@@ -221,7 +229,9 @@ export default async function QuizDashboard() {
                           </div>
 
                           <div className="flex items-center justify-between">
-                            {quiz.match_score !== null || quiz.completed_at ? (
+                            {quiz.status === "completed" ||
+                            quiz.match_score !== null ||
+                            quiz.completed_at ? (
                               <Link
                                 href={`/quiz/${quiz.id}`}
                                 className="flex-1"
