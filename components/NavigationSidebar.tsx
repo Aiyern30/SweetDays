@@ -14,6 +14,8 @@ import {
   User,
   Gamepad2,
   MessageSquareHeart,
+  Target,
+  HeartHandshake,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -26,6 +28,8 @@ const navigation = [
   { name: "Confessions", href: "/confessions", icon: MessageCircle },
   { name: "Diaries", href: "/diaries", icon: BookOpen },
   { name: "Quiz", href: "/quiz", icon: MessageSquareHeart },
+  { name: "Heartfelt Q&A", href: "/qa_questions", icon: HeartHandshake },
+  { name: "Shared Goals", href: "/shared_goals", icon: Target },
   { name: "Game", href: "/game", icon: Gamepad2 },
   { name: "Profile", href: "/profile", icon: User },
 ];
