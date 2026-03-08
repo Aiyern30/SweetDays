@@ -1,6 +1,5 @@
 import { QABuilder } from "@/components/qa/QABuilder";
 import { MessageCircle, ArrowLeft } from "lucide-react";
-import Link from "react-router-dom"; // Wait, this is Next.js
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Button } from "@/components/ui/button";
 
