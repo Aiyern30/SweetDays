@@ -30,27 +30,29 @@ export function GoalCard({
   const [isCheckinOpen, setIsCheckinOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
+  const [latest, setLatest] = useState<any>(null);
   const style = CATEGORY_STYLES[goal.category] || CATEGORY_STYLES.lifestyle;
 
   const isCompleted = goal.status === "completed";
 
   // Fetch check-ins for this goal
   useEffect(() => {
-    if (showHistory) {
-      const fetchHistory = async () => {
-        const supabase = createClient();
-        const { data } = await supabase
-          .from("goal_checkins")
-          .select("*, profiles(display_name, avatar_url)")
-          .eq("goal_id", goal.id)
-          .order("created_at", { ascending: false })
-          .limit(10);
+    const fetchHistory = async () => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("goal_checkins")
+        .select("*, profiles(display_name, avatar_url)")
+        .eq("goal_id", goal.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
 
-        if (data) setHistory(data);
-      };
-      fetchHistory();
-    }
-  }, [showHistory, goal.id]);
+      if (data) {
+        setHistory(data);
+        if (data[0]) setLatest(data[0]);
+      }
+    };
+    fetchHistory();
+  }, [showHistory, goal.id, isCheckinOpen]);
 
   const handleToggleComplete = async () => {
     setIsUpdating(true);
@@ -138,6 +140,23 @@ export function GoalCard({
             <p className="text-sm text-gray-500 line-clamp-2 mb-4 italic leading-relaxed">
               "{goal.description}"
             </p>
+          )}
+
+          {/* Latest Heartbeat */}
+          {latest && (
+            <div className="mb-4 flex items-center gap-3 bg-rose-50/40 p-3 rounded-2xl border border-rose-100/30">
+              <span className="text-xl shrink-0 bg-white w-9 h-9 rounded-xl flex items-center justify-center shadow-sm">
+                {latest.mood}
+              </span>
+              <div className="flex-1 min-w-0">
+                <span className="text-[9px] uppercase font-bold text-rose-300 tracking-tighter block mb-0.5">
+                  Latest Heartbeat
+                </span>
+                <p className="text-xs text-gray-600 italic line-clamp-1 leading-none">
+                  "{latest.note || "Sharing the love..."}"
+                </p>
+              </div>
+            </div>
           )}
 
           {/* Progress Section */}
