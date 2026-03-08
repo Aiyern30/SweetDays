@@ -273,10 +273,24 @@ export async function getQASessionDetails(sessionId: string) {
 
     if (questionsError) throw questionsError;
 
+    // Normalize questions to ensure qa_answers is always an array
+    const normalizedQuestions = questions?.map((q: any) => ({
+      ...q,
+      qa_answers: Array.isArray(q.qa_answers)
+        ? q.qa_answers
+        : q.qa_answers
+          ? [q.qa_answers]
+          : Array.isArray((q as any).qa_answer)
+            ? (q as any).qa_answer
+            : (q as any).qa_answer
+              ? [(q as any).qa_answer]
+              : [],
+    }));
+
     return {
       success: true,
       session,
-      questions,
+      questions: normalizedQuestions,
     };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -312,15 +326,34 @@ export async function submitQAAnswer(questionId: string, answerText: string) {
       .single();
 
     if (question?.session_id) {
-      // logic to mark session as completed if all answered...
-      // for now just toggle is_answered on question
+      // 1. Mark this question as answered
       await supabase
         .from("qa_questions")
         .update({ is_answered: true })
         .eq("id", questionId);
+
+      // 2. Check if all questions are now answered
+      const { data: qStats } = await supabase
+        .from("qa_questions")
+        .select("is_answered")
+        .eq("session_id", question.session_id);
+
+      const allDone = qStats?.every((q) => q.is_answered);
+
+      if (allDone) {
+        const adminSupabase = await createAdminClient();
+        await adminSupabase
+          .from("qa_sessions")
+          .update({
+            status: "completed",
+            completed_at: new Date().toISOString(),
+          })
+          .eq("id", question.session_id);
+      }
     }
 
     revalidatePath("/qa_questions");
+    revalidatePath(`/qa_questions/${question?.session_id || ""}`);
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };

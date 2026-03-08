@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   ChevronRight,
   ChevronLeft,
+  Heart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -27,27 +28,31 @@ export function QAAnswerForm({ questions }: { questions: any[] }) {
 
   const handleNext = async () => {
     const answer = answers[currentQuestion.id];
-    if (!answer?.trim()) {
-      toast.error("Please write your answer first 🌸");
-      return;
-    }
+    if (!answer?.trim()) return;
 
     setIsSubmitting(true);
-    const result = await submitQAAnswer(currentQuestion.id, answer);
+    try {
+      const result = await submitQAAnswer(currentQuestion.id, answer);
 
-    if (result.success) {
-      if (isLast) {
-        toast.success("All questions answered! Well done 💕");
-        router.refresh(); // This should trigger the "completed" view
+      if (result.success) {
+        if (isLast) {
+          toast.success("All questions answered! Well done 💕");
+          router.refresh();
+        } else {
+          setCurrentIndex((prev) => prev + 1);
+        }
       } else {
-        setCurrentIndex((prev) => prev + 1);
-        setIsSubmitting(false);
+        toast.error(result.error || "Failed to save answer");
       }
-    } else {
-      toast.error(result.error || "Failed to save answer");
+    } catch (err) {
+      toast.error("An unexpected error occurred");
+    } finally {
       setIsSubmitting(false);
     }
   };
+
+  const currentAnswer = answers[currentQuestion.id] || "";
+  const isAnswerEmpty = !currentAnswer.trim();
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
@@ -86,12 +91,9 @@ export function QAAnswerForm({ questions }: { questions: any[] }) {
           <div className="relative group">
             <Textarea
               placeholder="Write your answer from the heart..."
-              value={answers[currentQuestion.id] || ""}
+              value={currentAnswer}
               onChange={(e) =>
-                setAnswers((prev) => ({
-                  ...prev,
-                  [currentQuestion.id]: e.target.value,
-                }))
+                setAnswers({ ...answers, [currentQuestion.id]: e.target.value })
               }
               className="min-h-[150px] bg-rose-50/30 border-rose-100 rounded-2xl p-6 text-lg text-gray-700 placeholder:text-rose-300 focus:ring-rose-500/10 focus:border-rose-400 transition-all resize-none"
               disabled={isSubmitting}
@@ -113,8 +115,13 @@ export function QAAnswerForm({ questions }: { questions: any[] }) {
 
             <Button
               onClick={handleNext}
-              disabled={isSubmitting}
-              className="bg-rose-600 hover:bg-rose-500 text-white rounded-xl px-10 h-12 font-bold shadow-lg shadow-rose-200 transition-all active:scale-95"
+              disabled={isSubmitting || isAnswerEmpty}
+              className={cn(
+                "rounded-xl px-10 h-12 font-bold shadow-lg transition-all active:scale-95",
+                isSubmitting || isAnswerEmpty
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
+                  : "bg-rose-600 hover:bg-rose-500 text-white shadow-rose-200",
+              )}
             >
               {isSubmitting
                 ? "Saving..."

@@ -7,6 +7,8 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Button } from "@/components/ui/button";
 import { QAAnswerForm } from "@/components/qa/QAAnswerForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function QADetailsPage({
   params,
 }: {
@@ -72,7 +74,7 @@ export default async function QADetailsPage({
             description="Your partner wants to know you better! Answer these questions from the heart."
           />
           <div className="mt-10">
-            <QAAnswerForm questions={questions} />
+            <QAAnswerForm questions={questions || []} />
           </div>
         </div>
       </div>
@@ -80,6 +82,8 @@ export default async function QADetailsPage({
   }
 
   // ─── Case 3: Completed View (Both parties) ──────────────────────────────
+  const allQuestions = questions || [];
+
   return (
     <div className="min-h-screen bg-rose-50/20">
       <div className="relative max-w-3xl mx-auto px-4 py-16">
@@ -96,7 +100,7 @@ export default async function QADetailsPage({
         </div>
 
         <div className="space-y-6">
-          {questions.map((q: any, i: number) => (
+          {allQuestions.map((q: any, i: number) => (
             <div
               key={q.id}
               className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
@@ -123,7 +127,11 @@ export default async function QADetailsPage({
                   </span>
                 </div>
                 <p className="text-gray-700 leading-relaxed italic">
-                  {q.qa_answers?.[0]?.answer_text || "No answer yet..."}
+                  {Array.isArray(q.qa_answers)
+                    ? q.qa_answers[0]?.answer_text || "No answer yet..."
+                    : (q.qa_answers as any)?.answer_text ||
+                      (q as any).qa_answer?.answer_text ||
+                      "No answer yet..."}
                 </p>
               </div>
             </div>
