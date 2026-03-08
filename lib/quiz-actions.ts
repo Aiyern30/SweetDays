@@ -137,6 +137,22 @@ export async function deleteQuiz(id: string) {
   }
 }
 
+export async function updateQuizTitle(id: string, title: string) {
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from("quiz_sessions")
+      .update({ title })
+      .eq("id", id);
+
+    if (error) throw error;
+    revalidatePath("/quiz");
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
 export async function updateQuiz(
   sessionId: string,
   title: string,
