@@ -9,6 +9,13 @@ import { useState } from "react";
 import { Heart, Gift, Calendar as CalendarIcon, Star } from "lucide-react";
 import { CreateEventDialog } from "@/components/dashboard/create-event-dialog";
 import { EditEventDialog } from "@/components/dashboard/edit-event-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const locales = {
   "en-US": enUS,
@@ -157,6 +164,137 @@ export function MilestoneCalendar({ milestones }: MilestoneCalendarProps) {
     setIsCreateDialogOpen(true);
   };
 
+  // Custom Toolbar Component for Year/Month selection
+  const CustomToolbar = (toolbar: any) => {
+    const goToBack = () => {
+      toolbar.onNavigate("PREV");
+    };
+
+    const goToNext = () => {
+      toolbar.onNavigate("NEXT");
+    };
+
+    const goToToday = () => {
+      toolbar.onNavigate("TODAY");
+    };
+
+    const handleYearChange = (yearStr: string) => {
+      const year = parseInt(yearStr);
+      const newDate = new Date(toolbar.date);
+      newDate.setFullYear(year);
+      toolbar.onNavigate("DATE", newDate);
+    };
+
+    const handleMonthChange = (monthStr: string) => {
+      const month = parseInt(monthStr);
+      const newDate = new Date(toolbar.date);
+      newDate.setMonth(month);
+      toolbar.onNavigate("DATE", newDate);
+    };
+
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let i = currentYear - 50; i <= currentYear + 10; i++) {
+      years.push(i);
+    }
+
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    return (
+      <div className="rbc-toolbar">
+        <div className="rbc-btn-group">
+          <button type="button" onClick={goToToday}>
+            Today
+          </button>
+          <button type="button" onClick={goToBack}>
+            Back
+          </button>
+          <button type="button" onClick={goToNext}>
+            Next
+          </button>
+        </div>
+
+        <div className="rbc-toolbar-label">
+          <Select
+            value={toolbar.date.getMonth().toString()}
+            onValueChange={handleMonthChange}
+          >
+            <SelectTrigger className="w-[140px] bg-background border-2 font-bold rounded-2xl">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="rounded-2xl border-2">
+              {months.map((month, index) => (
+                <SelectItem key={month} value={index.toString()}>
+                  {month}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={toolbar.date.getFullYear().toString()}
+            onValueChange={handleYearChange}
+          >
+            <SelectTrigger className="w-[110px] bg-background border-2 font-bold rounded-2xl">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="rounded-2xl border-2">
+              {years.map((year) => (
+                <SelectItem key={year} value={year.toString()}>
+                  {year}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="rbc-btn-group">
+          <button
+            type="button"
+            onClick={() => toolbar.onView("month")}
+            className={toolbar.view === "month" ? "rbc-active" : ""}
+          >
+            Month
+          </button>
+          <button
+            type="button"
+            onClick={() => toolbar.onView("week")}
+            className={toolbar.view === "week" ? "rbc-active" : ""}
+          >
+            Week
+          </button>
+          <button
+            type="button"
+            onClick={() => toolbar.onView("day")}
+            className={toolbar.view === "day" ? "rbc-active" : ""}
+          >
+            Day
+          </button>
+          <button
+            type="button"
+            onClick={() => toolbar.onView("agenda")}
+            className={toolbar.view === "agenda" ? "rbc-active" : ""}
+          >
+            Agenda
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="milestone-calendar">
       <Calendar
@@ -169,6 +307,7 @@ export function MilestoneCalendar({ milestones }: MilestoneCalendarProps) {
         eventPropGetter={eventStyleGetter}
         components={{
           event: EventComponent,
+          toolbar: CustomToolbar,
         }}
         popup
         tooltipAccessor={(event: any) =>

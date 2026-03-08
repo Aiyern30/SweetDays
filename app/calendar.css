@@ -1,178 +1,184 @@
-        .milestone-calendar {
-          height: 600px;
+.milestone-calendar {
+          height: 700px;
+          background: var(--card);
+          padding: 1.5rem;
+          border-radius: var(--radius-2xl);
+          box-shadow: 0 10px 30px -10px oklch(0.6 0.2 15 / 0.1);
+          border: 1px solid var(--border);
+        }
+
+        .dark .milestone-calendar {
+          box-shadow: 0 10px 30px -10px oklch(0 0 0 / 0.5);
         }
 
         .rbc-calendar {
-          font-family: inherit;
+          font-family: var(--font-sans);
         }
 
         .rbc-header {
-          padding: 12px 8px;
-          font-weight: 600;
-          color: rgb(17 24 39);
-          border-bottom: 2px solid rgb(243 244 246);
-        }
-
-        .dark .rbc-header {
-          color: rgb(243 244 246);
-          border-bottom-color: rgb(63 63 70);
+          padding: 16px 8px;
+          font-weight: 700;
+          color: var(--foreground);
+          border-bottom: 2px solid var(--border);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          font-size: 0.75rem;
         }
 
         .rbc-off-range-bg {
-          background: rgb(249 250 251);
-        }
-
-        .dark .rbc-off-range-bg {
-          background: rgb(24 24 27);
+          background: var(--muted);
+          opacity: 0.5;
         }
 
         .rbc-today {
-          background-color: rgb(254 242 242);
-        }
-
-        .dark .rbc-today {
-          background-color: rgb(76 29 29);
+          background-color: var(--secondary);
         }
 
         .rbc-month-view,
         .rbc-time-view {
-          border: 1px solid rgb(229 231 235);
-          border-radius: 12px;
+          border: 1px solid var(--border);
+          border-radius: var(--radius-lg);
           overflow: hidden;
+          background: var(--card);
         }
 
-        .dark .rbc-month-view,
-        .dark .rbc-time-view {
-          border-color: rgb(63 63 70);
+        .rbc-month-row {
+          border-top: 1px solid var(--border);
+        }
+
+        .rbc-day-bg + .rbc-day-bg {
+          border-left: 1px solid var(--border);
         }
 
         .rbc-date-cell {
-          padding: 8px;
+          padding: 12px;
           text-align: right;
         }
 
         .rbc-date-cell > a {
-          color: rgb(75 85 99);
-          font-weight: 500;
+          color: var(--muted-foreground);
+          font-weight: 600;
+          font-size: 0.9rem;
+          text-decoration: none;
+          transition: color 0.2s;
         }
 
-        .dark .rbc-date-cell > a {
-          color: rgb(209 213 219);
+        .rbc-date-cell > a:hover {
+          color: var(--primary);
         }
 
         .rbc-now .rbc-date-cell > a {
-          color: rgb(244 63 94);
-          font-weight: 700;
-        }
-
-        .dark .rbc-now .rbc-date-cell > a {
-          color: rgb(251 113 133);
+          color: var(--primary);
+          font-weight: 800;
+          font-size: 1rem;
         }
 
         .rbc-event {
-          padding: 2px 6px;
+          padding: 4px 8px;
           cursor: pointer;
+          border-radius: 8px !important;
+          transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .rbc-event:hover {
-          opacity: 1;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px oklch(0 0 0 / 0.15);
         }
 
         .rbc-event:focus {
-          outline: 2px solid rgb(244 63 94);
+          outline: 2px solid var(--ring);
+          outline-offset: 1px;
         }
 
-        /* Allow multiple events to stack vertically */
         .rbc-row-segment {
-          padding: 1px 2px;
+          padding: 2px 4px;
         }
 
-        .rbc-event-label {
-          font-size: 0.75rem;
+        .rbc-event-content {
+          font-size: 0.8rem;
+          font-weight: 600;
         }
 
         .rbc-toolbar {
-          padding: 16px;
-          margin-bottom: 16px;
-          background: rgb(249 250 251);
-          border-radius: 12px;
-          border: 1px solid rgb(229 231 235);
-        }
-
-        .dark .rbc-toolbar {
-          background: rgb(39 39 42);
-          border-color: rgb(63 63 70);
-        }
-
-        .rbc-toolbar button {
-          color: rgb(75 85 99);
-          padding: 8px 16px;
-          border-radius: 8px;
-          border: 1px solid rgb(229 231 235);
-          background: white;
-          font-weight: 500;
-          transition: all 0.2s;
-        }
-
-        .dark .rbc-toolbar button {
-          color: rgb(209 213 219);
-          border-color: rgb(63 63 70);
-          background: rgb(39 39 42);
-        }
-
-        .rbc-toolbar button:hover {
-          background: rgb(243 244 246);
-          border-color: rgb(209 213 219);
-        }
-
-        .dark .rbc-toolbar button:hover {
-          background: rgb(63 63 70);
-          border-color: rgb(82 82 91);
-        }
-
-        .rbc-toolbar button.rbc-active {
-          background: rgb(244 63 94);
-          color: white;
-          border-color: rgb(244 63 94);
-        }
-
-        .dark .rbc-toolbar button.rbc-active {
-          background: rgb(244 63 94);
-          border-color: rgb(244 63 94);
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: space-between;
+          padding: 1rem;
+          margin-bottom: 1.5rem;
+          background: var(--muted);
+          border-radius: var(--radius-xl);
+          border: 1px solid var(--border);
+          gap: 1rem;
         }
 
         .rbc-toolbar-label {
-          font-weight: 700;
-          font-size: 1.125rem;
-          color: rgb(17 24 39);
+          font-weight: 800;
+          font-size: 1.25rem;
+          color: var(--foreground);
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          flex-grow: 1;
+          justify-content: center;
         }
 
-        .dark .rbc-toolbar-label {
-          color: rgb(243 244 246);
-        }
-
-        /* Show more link styling */
-        .rbc-show-more {
-          background-color: rgba(244, 63, 94, 0.1);
-          color: rgb(244 63 94);
+        .rbc-toolbar button {
+          color: var(--foreground);
+          padding: 8px 16px;
+          border-radius: var(--radius-md);
+          border: 1px solid var(--border);
+          background: var(--card);
           font-weight: 600;
-          padding: 2px 6px;
-          border-radius: 4px;
-          font-size: 0.75rem;
+          transition: all 0.2s;
           cursor: pointer;
+        }
+
+        .rbc-toolbar button:hover {
+          background: var(--accent);
+          color: var(--accent-foreground);
+          border-color: var(--primary);
+        }
+
+        .rbc-toolbar button:active,
+        .rbc-toolbar button.rbc-active {
+          background: var(--primary);
+          color: var(--primary-foreground);
+          border-color: var(--primary);
+          box-shadow: 0 4px 12px oklch(0.6 0.2 15 / 0.3);
+        }
+
+        .rbc-btn-group {
+          display: flex;
+          gap: 4px;
+        }
+
+        .rbc-show-more {
+          background-color: var(--secondary);
+          color: var(--secondary-foreground);
+          font-weight: 700;
+          padding: 2px 8px;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          margin-top: 2px;
           transition: all 0.2s;
         }
 
         .rbc-show-more:hover {
-          background-color: rgba(244, 63, 94, 0.2);
+          background-color: var(--primary);
+          color: var(--primary-foreground);
         }
 
-        .dark .rbc-show-more {
-          background-color: rgba(244, 63, 94, 0.2);
-          color: rgb(251, 113, 133);
-        }
-
-        .dark .rbc-show-more:hover {
-          background-color: rgba(244, 63, 94, 0.3);
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+          .rbc-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .rbc-toolbar-label {
+            order: -1;
+          }
+          .rbc-btn-group {
+            justify-content: center;
+          }
         }

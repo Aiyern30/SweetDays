@@ -16,7 +16,17 @@ import {
   ChevronDown,
   Bell,
   Trash2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 interface Milestone {
   id: string;
@@ -107,6 +117,25 @@ export function EditEventDialog({
       setSelectedMinutes(milestone.advance_minutes?.toString() || "0");
     }
   }, [milestone]);
+
+  const years = Array.from(
+    { length: 100 },
+    (_, i) => new Date().getFullYear() - 80 + i,
+  );
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   if (!isOpen || !milestone) return null;
 
@@ -234,6 +263,81 @@ export function EditEventDialog({
                     showPopperArrow={false}
                     popperPlacement="bottom-start"
                     required
+                    renderCustomHeader={({
+                      date,
+                      changeYear,
+                      changeMonth,
+                      decreaseMonth,
+                      increaseMonth,
+                      prevMonthButtonDisabled,
+                      nextMonthButtonDisabled,
+                    }) => (
+                      <div className="flex items-center justify-between px-2 py-2 gap-2">
+                        <Button
+                          onClick={decreaseMonth}
+                          disabled={prevMonthButtonDisabled}
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-full"
+                          type="button"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+
+                        <div className="flex gap-1">
+                          <Select
+                            value={date.getMonth().toString()}
+                            onValueChange={(val) => changeMonth(parseInt(val))}
+                          >
+                            <SelectTrigger className="h-8 w-[100px] text-xs font-bold rounded-lg border-gray-200">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl">
+                              {months.map((month, index) => (
+                                <SelectItem
+                                  key={month}
+                                  value={index.toString()}
+                                  className="text-xs"
+                                >
+                                  {month}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          <Select
+                            value={date.getFullYear().toString()}
+                            onValueChange={(val) => changeYear(parseInt(val))}
+                          >
+                            <SelectTrigger className="h-8 w-[80px] text-xs font-bold rounded-lg border-gray-200">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl">
+                              {years.map((year) => (
+                                <SelectItem
+                                  key={year}
+                                  value={year.toString()}
+                                  className="text-xs"
+                                >
+                                  {year}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <Button
+                          onClick={increaseMonth}
+                          disabled={nextMonthButtonDisabled}
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-full"
+                          type="button"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   />
                 </div>
               </div>
@@ -253,6 +357,83 @@ export function EditEventDialog({
                       calendarClassName="custom-calendar"
                       showPopperArrow={false}
                       popperPlacement="bottom-start"
+                      renderCustomHeader={({
+                        date,
+                        changeYear,
+                        changeMonth,
+                        decreaseMonth,
+                        increaseMonth,
+                        prevMonthButtonDisabled,
+                        nextMonthButtonDisabled,
+                      }) => (
+                        <div className="flex items-center justify-between px-2 py-2 gap-2">
+                          <Button
+                            onClick={decreaseMonth}
+                            disabled={prevMonthButtonDisabled}
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-full"
+                            type="button"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+
+                          <div className="flex gap-1">
+                            <Select
+                              value={date.getMonth().toString()}
+                              onValueChange={(val) =>
+                                changeMonth(parseInt(val))
+                              }
+                            >
+                              <SelectTrigger className="h-8 w-[100px] text-xs font-bold rounded-lg border-gray-200">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="rounded-xl">
+                                {months.map((month, index) => (
+                                  <SelectItem
+                                    key={month}
+                                    value={index.toString()}
+                                    className="text-xs"
+                                  >
+                                    {month}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            <Select
+                              value={date.getFullYear().toString()}
+                              onValueChange={(val) => changeYear(parseInt(val))}
+                            >
+                              <SelectTrigger className="h-8 w-[80px] text-xs font-bold rounded-lg border-gray-200">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="rounded-xl">
+                                {years.map((year) => (
+                                  <SelectItem
+                                    key={year}
+                                    value={year.toString()}
+                                    className="text-xs"
+                                  >
+                                    {year}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <Button
+                            onClick={increaseMonth}
+                            disabled={nextMonthButtonDisabled}
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-full"
+                            type="button"
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
                     />
                   </div>
                 </div>

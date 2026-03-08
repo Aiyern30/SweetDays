@@ -12,6 +12,8 @@ import {
   Heart,
   Clock,
   Bell,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   Dialog,
@@ -99,6 +101,25 @@ export function CreateEventDialog({
   const currentType =
     EVENT_TYPES.find((t) => t.id === selectedType) || EVENT_TYPES[0];
 
+  const years = Array.from(
+    { length: 100 },
+    (_, i) => new Date().getFullYear() - 80 + i,
+  );
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
   async function handleSubmit(formData: FormData) {
     try {
       setIsLoading(true);
@@ -177,6 +198,79 @@ export function CreateEventDialog({
                     showPopperArrow={false}
                     popperPlacement="bottom-start"
                     required
+                    renderCustomHeader={({
+                      date,
+                      changeYear,
+                      changeMonth,
+                      decreaseMonth,
+                      increaseMonth,
+                      prevMonthButtonDisabled,
+                      nextMonthButtonDisabled,
+                    }) => (
+                      <div className="flex items-center justify-between px-2 py-2 gap-2">
+                        <Button
+                          onClick={decreaseMonth}
+                          disabled={prevMonthButtonDisabled}
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-full"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+
+                        <div className="flex gap-1">
+                          <Select
+                            value={date.getMonth().toString()}
+                            onValueChange={(val) => changeMonth(parseInt(val))}
+                          >
+                            <SelectTrigger className="h-8 w-[100px] text-xs font-bold rounded-lg border-gray-200">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl">
+                              {months.map((month, index) => (
+                                <SelectItem
+                                  key={month}
+                                  value={index.toString()}
+                                  className="text-xs"
+                                >
+                                  {month}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          <Select
+                            value={date.getFullYear().toString()}
+                            onValueChange={(val) => changeYear(parseInt(val))}
+                          >
+                            <SelectTrigger className="h-8 w-[80px] text-xs font-bold rounded-lg border-gray-200">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl">
+                              {years.map((year) => (
+                                <SelectItem
+                                  key={year}
+                                  value={year.toString()}
+                                  className="text-xs"
+                                >
+                                  {year}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <Button
+                          onClick={increaseMonth}
+                          disabled={nextMonthButtonDisabled}
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-full"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   />
                 </div>
               </div>
@@ -194,6 +288,81 @@ export function CreateEventDialog({
                       calendarClassName="custom-calendar"
                       showPopperArrow={false}
                       popperPlacement="bottom-start"
+                      renderCustomHeader={({
+                        date,
+                        changeYear,
+                        changeMonth,
+                        decreaseMonth,
+                        increaseMonth,
+                        prevMonthButtonDisabled,
+                        nextMonthButtonDisabled,
+                      }) => (
+                        <div className="flex items-center justify-between px-2 py-2 gap-2">
+                          <Button
+                            onClick={decreaseMonth}
+                            disabled={prevMonthButtonDisabled}
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-full"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+
+                          <div className="flex gap-1">
+                            <Select
+                              value={date.getMonth().toString()}
+                              onValueChange={(val) =>
+                                changeMonth(parseInt(val))
+                              }
+                            >
+                              <SelectTrigger className="h-8 w-[100px] text-xs font-bold rounded-lg border-gray-200">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="rounded-xl">
+                                {months.map((month, index) => (
+                                  <SelectItem
+                                    key={month}
+                                    value={index.toString()}
+                                    className="text-xs"
+                                  >
+                                    {month}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            <Select
+                              value={date.getFullYear().toString()}
+                              onValueChange={(val) => changeYear(parseInt(val))}
+                            >
+                              <SelectTrigger className="h-8 w-[80px] text-xs font-bold rounded-lg border-gray-200">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="rounded-xl">
+                                {years.map((year) => (
+                                  <SelectItem
+                                    key={year}
+                                    value={year.toString()}
+                                    className="text-xs"
+                                  >
+                                    {year}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <Button
+                            onClick={increaseMonth}
+                            disabled={nextMonthButtonDisabled}
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-full"
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
                     />
                   </div>
                 </div>
@@ -207,13 +376,13 @@ export function CreateEventDialog({
                   value={selectedType}
                 />
                 <Select value={selectedType} onValueChange={setSelectedType}>
-                  <SelectTrigger>
+                  <SelectTrigger className="rounded-2xl">
                     <div className="flex items-center gap-2">
                       <currentType.icon className="w-4 h-4 text-rose-500" />
                       <span>{currentType.label}</span>
                     </div>
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-2xl">
                     {EVENT_TYPES.map((type) => (
                       <SelectItem key={type.id} value={type.id}>
                         <div className="flex items-center gap-3">
@@ -254,10 +423,10 @@ export function CreateEventDialog({
                   value={selectedReminder}
                   onValueChange={setSelectedReminder}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="rounded-2xl">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-2xl">
                     {REMINDER_TYPES.map((reminder) => (
                       <SelectItem key={reminder.id} value={reminder.id}>
                         {reminder.label}
@@ -292,10 +461,10 @@ export function CreateEventDialog({
                         value={selectedDays}
                         onValueChange={setSelectedDays}
                       >
-                        <SelectTrigger className="rounded-xl px-3 py-2.5 text-sm">
+                        <SelectTrigger className="rounded-2xl px-3 py-2.5 text-sm">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl max-h-40">
+                        <SelectContent className="rounded-2xl max-h-40">
                           {DAY_OPTIONS.slice(0, 31).map((option) => (
                             <SelectItem
                               key={option.value}
@@ -321,10 +490,10 @@ export function CreateEventDialog({
                         value={selectedHours}
                         onValueChange={setSelectedHours}
                       >
-                        <SelectTrigger className="rounded-xl px-3 py-2.5 text-sm">
+                        <SelectTrigger className="rounded-2xl px-3 py-2.5 text-sm">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl max-h-40">
+                        <SelectContent className="rounded-2xl max-h-40">
                           {HOUR_OPTIONS.map((option) => (
                             <SelectItem
                               key={option.value}
@@ -350,10 +519,10 @@ export function CreateEventDialog({
                         value={selectedMinutes}
                         onValueChange={setSelectedMinutes}
                       >
-                        <SelectTrigger className="rounded-xl px-3 py-2.5 text-sm">
+                        <SelectTrigger className="rounded-2xl px-3 py-2.5 text-sm">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl max-h-40">
+                        <SelectContent className="rounded-2xl max-h-40">
                           {MINUTE_OPTIONS.map((option) => (
                             <SelectItem
                               key={option.value}
