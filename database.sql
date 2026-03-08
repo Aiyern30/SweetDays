@@ -257,9 +257,23 @@ CREATE TABLE public.qa_questions (
   is_answered boolean DEFAULT false,
   created_at timestamp with time zone DEFAULT now(),
   display_order integer NOT NULL DEFAULT 0,
+  session_id uuid,
   CONSTRAINT qa_questions_pkey PRIMARY KEY (id),
   CONSTRAINT qa_questions_relationship_id_fkey FOREIGN KEY (relationship_id) REFERENCES public.relationships(id),
-  CONSTRAINT qa_questions_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
+  CONSTRAINT qa_questions_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id),
+  CONSTRAINT qa_questions_session_id_fkey FOREIGN KEY (session_id) REFERENCES public.qa_sessions(id)
+);
+CREATE TABLE public.qa_sessions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  relationship_id uuid NOT NULL,
+  created_by uuid NOT NULL,
+  title text,
+  status text DEFAULT 'draft'::text,
+  created_at timestamp with time zone DEFAULT now(),
+  completed_at timestamp with time zone,
+  CONSTRAINT qa_sessions_pkey PRIMARY KEY (id),
+  CONSTRAINT qa_sessions_relationship_id_fkey FOREIGN KEY (relationship_id) REFERENCES public.relationships(id),
+  CONSTRAINT qa_sessions_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
 );
 CREATE TABLE public.quiz_questions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
