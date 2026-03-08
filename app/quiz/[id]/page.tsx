@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import { QuizBuilder } from "@/components/quiz/QuizBuilder";
+import { QuizPlayer } from "@/components/quiz/QuizPlayer";
 import { Question } from "@/types/quiz";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -33,8 +34,7 @@ export default async function EditQuizPage({
 
   if (!session) return notFound();
 
-  // Enforce only creator can edit
-  if (session.created_by !== user.id) {
+  if (session.created_by !== user.id && session.status === "draft") {
     return (
       <div className="min-h-screen pt-20 px-4 flex justify-center bg-rose-50/30">
         <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl shadow-rose-200/50 text-center border border-rose-100">
@@ -42,11 +42,10 @@ export default async function EditQuizPage({
             <Lock className="text-rose-500 w-8 h-8" />
           </div>
           <h2 className="text-2xl font-bold text-rose-900 mb-3">
-            Access Denied
+            Quiz Unavailable
           </h2>
           <p className="text-rose-600 mb-8">
-            This quiz was created by your partner. Only the creator can edit
-            this quiz!
+            Your partner is still working on this quiz. Come back later!
           </p>
           <Link href="/quiz">
             <Button className="w-full bg-pink-600 hover:bg-pink-500 text-white shadow-lg shadow-pink-900/20">
@@ -71,6 +70,11 @@ export default async function EditQuizPage({
     title: session.title,
     questions: questions as Question[],
   };
+
+  // Enforce partner answers, creator edits
+  if (session.created_by !== user.id) {
+    return <QuizPlayer quiz={initialQuiz} />;
+  }
 
   return <QuizBuilder initialQuiz={initialQuiz} />;
 }

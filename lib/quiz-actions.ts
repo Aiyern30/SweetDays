@@ -197,3 +197,83 @@ export async function updateQuiz(
     return { success: false, error: error.message || "Failed to update quiz" };
   }
 }
+
+export async function submitQuizResponses(
+  sessionId: string,
+  responses: { question_id: string; selected_option: string }[],
+) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      throw new Error("You must be logged in to answer a quiz");
+    }
+
+    // Fetch questions to calculate if match
+    const { data: questions, error: questionsError } = await supabase
+      .from("quiz_questions")
+      .select("id, correct_option")
+      .eq("session_id", sessionId);
+
+    if (questionsError || !questions) {
+      throw new Error("Failed to fetch questions for validation");
+    }
+
+    let matchCount = 0;
+    const responsesToInsert = responses.map((r) => {
+      const q = questions.find((sq) => sq.id === r.question_id);
+      const isMatch = q ? q.correct_option === r.selected_option : false;
+      if (isMatch) matchCount++;
+
+      return {
+        session_id: sessionId,
+        question_id: r.question_id,
+        answered_by: user.id,
+        selected_option: r.selected_option,
+        is_match: isMatch,
+      };
+    });
+
+    // Delete any previous answers from this user for this session
+    await supabase
+      .from("quiz_responses")
+      .delete()
+      .eq("session_id", sessionId)
+      .eq("answered_by", user.id);
+
+    // Insert new responses
+    const { error: insertError } = await supabase
+      .from("quiz_responses")
+      .insert(responsesToInsert);
+
+    if (insertError) {
+      throw new Error(`Failed to save responses: ${insertError.message}`);
+    }
+
+    // Calculate match score
+    const matchScore = (matchCount / questions.length) * 100;
+
+    // Update match score and status
+    await supabase
+      .from("quiz_sessions")
+      .update({
+        match_score: matchScore,
+        completed_at: new Date().toISOString(),
+      })
+      .eq("id", sessionId);
+
+    revalidatePath("/quiz");
+    revalidatePath(`/quiz/${sessionId}`);
+
+    return { success: true, matchScore };
+  } catch (error: any) {
+    console.error("Quiz submit answers error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to submit answers",
+    };
+  }
+}
