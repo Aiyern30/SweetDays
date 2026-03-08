@@ -16,11 +16,9 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Input, Textarea, Label } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -117,7 +115,7 @@ export function ChallengeDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] rounded-[32px] border-rose-100 shadow-2xl p-0 overflow-hidden bg-white/95 backdrop-blur-sm">
+      <DialogContent className="sm:max-w-2xl rounded-[32px] border-rose-100 shadow-2xl p-0 overflow-hidden bg-white/95 backdrop-blur-sm">
         <div className="bg-pink-600 p-6 flex items-center gap-3">
           <div className="p-2 bg-white/20 rounded-xl">
             <Flame className="w-5 h-5 text-white" />
@@ -132,21 +130,18 @@ export function ChallengeDialog({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="p-6 space-y-4"
+            className="p-6 sm:p-8 space-y-6"
           >
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-rose-600 font-bold text-xs uppercase tracking-wider">
-                    Challenge Title
-                  </FormLabel>
+                <FormItem className="space-y-2">
+                  <Label>Challenge Title</Label>
                   <FormControl>
                     <Input
                       placeholder="e.g. Cook dinner together 🍳"
                       {...field}
-                      className="rounded-xl border-rose-100 focus-visible:ring-pink-400"
                     />
                   </FormControl>
                   <FormMessage />
@@ -158,15 +153,13 @@ export function ChallengeDialog({
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-rose-600 font-bold text-xs uppercase tracking-wider">
-                    Details (Optional)
-                  </FormLabel>
+                <FormItem className="space-y-2">
+                  <Label>Details (Optional)</Label>
                   <FormControl>
                     <Textarea
                       placeholder="What counts as completing this?"
                       {...field}
-                      className="rounded-xl border-rose-100 focus-visible:ring-pink-400 resize-none"
+                      rows={3}
                     />
                   </FormControl>
                   <FormMessage />
@@ -174,25 +167,23 @@ export function ChallengeDialog({
               )}
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <FormField
                 control={form.control}
                 name="category"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-rose-600 font-bold text-xs uppercase tracking-wider">
-                      Category
-                    </FormLabel>
+                  <FormItem className="space-y-2">
+                    <Label>Category</Label>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="rounded-xl border-rose-100">
+                        <SelectTrigger className="rounded-2xl">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="rounded-xl">
+                      <SelectContent className="rounded-2xl">
                         <SelectItem value="fun">🎉 Fun</SelectItem>
                         <SelectItem value="romantic">💕 Romantic</SelectItem>
                         <SelectItem value="growth">🌱 Growth</SelectItem>
@@ -208,20 +199,18 @@ export function ChallengeDialog({
                 control={form.control}
                 name="difficulty"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-rose-600 font-bold text-xs uppercase tracking-wider">
-                      Difficulty
-                    </FormLabel>
+                  <FormItem className="space-y-2">
+                    <Label>Difficulty</Label>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="rounded-xl border-rose-100">
+                        <SelectTrigger className="rounded-2xl">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="rounded-xl">
+                      <SelectContent className="rounded-2xl">
                         <SelectItem value="easy">Easy</SelectItem>
                         <SelectItem value="medium">Medium</SelectItem>
                         <SelectItem value="hard">Hard</SelectItem>
@@ -233,23 +222,17 @@ export function ChallengeDialog({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <FormField
                 control={form.control}
                 name="duration_days"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-rose-600 font-bold text-xs uppercase tracking-wider">
-                      Days to complete
-                    </FormLabel>
+                  <FormItem className="space-y-2">
+                    <Label>Days to complete</Label>
                     <FormControl>
                       <div className="relative">
-                        <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-rose-300" />
-                        <Input
-                          type="number"
-                          {...field}
-                          className="rounded-xl border-rose-100 pl-9 focus-visible:ring-pink-400"
-                        />
+                        <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-rose-300" />
+                        <Input type="number" {...field} className="pl-11" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -261,18 +244,16 @@ export function ChallengeDialog({
                 control={form.control}
                 name="due_at"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-rose-600 font-bold text-xs uppercase tracking-wider">
-                      Target Date
-                    </FormLabel>
+                  <FormItem className="space-y-2">
+                    <Label>Target Date</Label>
                     <FormControl>
                       <div className="relative">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-rose-300" />
+                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-rose-300" />
                         <Input
                           type="date"
                           {...field}
                           value={field.value || ""}
-                          className="rounded-xl border-rose-100 pl-9 focus-visible:ring-pink-400 appearance-none"
+                          className="pl-11 appearance-none"
                         />
                       </div>
                     </FormControl>
