@@ -1,9 +1,102 @@
 import React, { useEffect, useState } from "react";
 import { motion, useAnimate, cubicBezier } from "framer-motion";
 import { SparklesIcon } from "lucide-react";
-export function AnimatedEnvelope() {
-  const [isOpen, setIsOpen] = useState(false);
+
+interface PagePhoto {
+  file: File | null;
+  position: "left" | "right" | null;
+  url?: string;
+}
+
+interface CategoryItem {
+  file: File | null;
+  url: string;
+  title: string;
+  date: string;
+}
+
+interface Category {
+  id: string;
+  name: string;
+  items: CategoryItem[];
+}
+
+interface AnimatedEnvelopeProps {
+  title?: string;
+  message?: string;
+  sender?: string;
+  recipient?: string;
+  isOpen?: boolean;
+  onOpenChange?: (isOpen: boolean) => void;
+  envelopeColor?: string;
+  pocketColor?: string;
+  flapColor?: string;
+  flapBackColor?: string;
+  cardColor?: string;
+  textColor?: string;
+  titleColor?: string;
+  music?: string;
+  pagePhotos?: { [pageIndex: number]: PagePhoto };
+  categories?: Category[];
+}
+
+export function AnimatedEnvelope({
+  title = "You're Invited",
+  message = "Join us for an evening of celebration, music, and joy.",
+  sender = "The Team",
+  recipient,
+  isOpen: controlledIsOpen,
+  onOpenChange,
+  envelopeColor = "#F5E6D3",
+  pocketColor = "#EDD9C4", 
+  flapColor = "#F2E3D0",
+  flapBackColor = "#E6D2BC",
+  cardColor = "#FAFAF7",
+  textColor = "#8C7B66",
+  titleColor = "#5C4B38",
+  pagePhotos = {},
+  categories = [],
+  music,
+}: AnimatedEnvelopeProps) {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [scope, animate] = useAnimate();
+  
+  // Use controlled state if provided, otherwise use internal state
+  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+  
+  // Helper to extract embed URL
+  const getEmbedUrl = (url: string) => {
+    if (!url) return null;
+
+    // Spotify
+    if (url.includes("spotify.com")) {
+      const match = url.match(/track\/([a-zA-Z0-9]+)/);
+      if (match && match[1]) {
+        return `https://open.spotify.com/embed/track/${match[1]}?utm_source=generator&theme=0&autoplay=1`;
+      }
+    }
+
+    // YouTube
+    if (url.includes("youtube.com") || url.includes("youtu.be")) {
+      let videoId = null;
+      if (url.includes("v=")) {
+        videoId = url.split("v=")[1].split("&")[0];
+      } else if (url.includes("youtu.be/")) {
+        videoId = url.split("youtu.be/")[1].split("?")[0];
+      }
+
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&showinfo=0`;
+      }
+    }
+
+    return null;
+  };
+
+  const embedUrl = React.useMemo(
+    () => (music ? getEmbedUrl(music) : null),
+    [music],
+  );
   // Animation configurations
   const springConfig = {
     stiffness: 120,
@@ -14,7 +107,11 @@ export function AnimatedEnvelope() {
   const handleToggle = async () => {
     if (isOpen) {
       // CLOSE SEQUENCE
-      setIsOpen(false);
+      if (onOpenChange) {
+        onOpenChange(false);
+      } else {
+        setInternalIsOpen(false);
+      }
       // 1. Card slides back in + Envelope comes forward (Parallel)
       await Promise.all([
         animate(
@@ -69,7 +166,11 @@ export function AnimatedEnvelope() {
       );
     } else {
       // OPEN SEQUENCE
-      setIsOpen(true);
+      if (onOpenChange) {
+        onOpenChange(true);
+      } else {
+        setInternalIsOpen(true);
+      }
       // 1. Tilt back
       await animate(
         ".envelope-root",
@@ -177,15 +278,15 @@ export function AnimatedEnvelope() {
                 <div className="w-8 h-8 rounded-full bg-[#F5E6D3] flex items-center justify-center mb-1">
                   <SparklesIcon className="w-4 h-4 text-[#8C7B66]" />
                 </div>
-                <h3 className="font-serif text-xl text-[#5C4B38] tracking-wide">
-                  You're Invited
+                <h3 className="font-serif text-xl tracking-wide" style={{ color: titleColor }}>
+                  {title}
                 </h3>
-                <div className="w-12 h-px bg-[#D4C4B0] my-2" />
-                <p className="text-[10px] uppercase tracking-widest text-[#8C7B66] font-medium">
-                  Saturday, October 24
+                <div className="w-12 h-px my-2" style={{ backgroundColor: textColor }} />
+                <p className="text-[10px] uppercase tracking-widest font-medium" style={{ color: textColor }}>
+                  For: {recipient || "Someone Special"}
                 </p>
-                <p className="text-xs text-[#8C7B66] leading-relaxed max-w-[180px]">
-                  Join us for an evening of celebration, music, and joy.
+                <p className="text-xs leading-relaxed max-w-[180px]" style={{ color: textColor }}>
+                  {message}
                 </p>
               </div>
 
@@ -259,6 +360,34 @@ export function AnimatedEnvelope() {
           </motion.div>
         </motion.div>
       </div>
+
+      {/* Background Music Player */}
+      {isOpen && embedUrl && (
+        <div className="absolute opacity-0 w-1 h-1 overflow-hidden pointer-events-none">
+          <iframe
+            src={embedUrl}
+            width="100%"
+            height="100"
+            frameBorder="0"
+            allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      )}
+
+      {/* Background Music Player */}
+      {isOpen && embedUrl && (
+        <div className="absolute opacity-0 w-1 h-1 overflow-hidden pointer-events-none">
+          <iframe
+            src={embedUrl}
+            width="100%"
+            height="100"
+            frameBorder="0"
+            allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      )}
 
       <style jsx global>{`
         .perspective-1200 {

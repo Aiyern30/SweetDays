@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useMemo } from "react";
+/* eslint-disable react-hooks/purity */
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Sparkles } from "lucide-react";
 import { easeInOut } from "framer-motion";
@@ -44,19 +45,19 @@ interface AnimatedEnvelopeProps {
 type EnvelopeStatus = "idle" | "cracking" | "revealed";
 
 export function AnimatedEnvelope({
-  title = "A Secret for You",
-  message = "In a world of noise, you are my clearest signal.",
-  sender = "Your Secret Admirer",
+  title = "Neon Dreams for You",
+  message = "Like neon lights in the dark, you illuminate my world.",
+  sender = "Your Night Light",
   recipient,
   isOpen: controlledIsOpen,
   onOpenChange,
-  envelopeColor = "#9e1b32",
-  pocketColor = "#8a1529",
-  flapColor = "#b92b45",
-  flapBackColor = "#7a1325",
-  cardColor = "#FDFBF7",
-  textColor = "#57534e",
-  titleColor = "#5D4037",
+  envelopeColor = "#0f0f23",
+  pocketColor = "#1a1a40",
+  flapColor = "#2d2d5f",
+  flapBackColor = "#0a0a1f",
+  cardColor = "#0a0a1a",
+  textColor = "#e0e0f0",
+  titleColor = "#00ffff",
   pagePhotos = {},
   categories = [],
   music,
@@ -126,7 +127,7 @@ export function AnimatedEnvelope({
             />
           </div>
         )}
-        <p className="font-serif text-sm leading-relaxed text-stone-600 italic">
+        <p className="font-mono text-sm leading-relaxed text-cyan-100 tracking-wide">
           {chunk}
         </p>
       </div>
@@ -140,9 +141,9 @@ export function AnimatedEnvelope({
     if (!allItems.length) return null;
 
     return (
-      <div className="mt-8 space-y-6 pt-6 border-t border-stone-200">
-        <h3 className="text-center font-serif italic text-stone-400 text-xs tracking-widest uppercase">
-          Secret Details
+      <div className="mt-8 space-y-6 pt-6 border-t border-cyan-400/30">
+        <h3 className="text-center font-mono italic text-cyan-400 text-xs tracking-widest uppercase">
+          Digital Memories
         </h3>
         <div className="grid grid-cols-1 gap-6">
           {allItems.map((item, i) => (
@@ -201,29 +202,68 @@ export function AnimatedEnvelope({
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-[600px] w-full perspective-1000">
-      {/* Ambient Particles/Stars */}
+      {/* Neon Ambient Particles/Circuit Lines */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute bg-white rounded-full opacity-20"
+            className="absolute rounded-full"
             initial={{
               x: Math.random() * 400 - 200,
               y: Math.random() * 400 - 200,
-              scale: Math.random() * 0.5 + 0.2,
+              scale: Math.random() * 0.5 + 0.3,
             }}
             animate={{
               y: [null, Math.random() * -100],
-              opacity: [0.2, 0.5, 0],
+              opacity: [0.1, 0.8, 0],
+              scale: [null, Math.random() * 0.3 + 0.2],
             }}
             transition={{
-              duration: Math.random() * 5 + 5,
+              duration: Math.random() * 4 + 3,
               repeat: Infinity,
               ease: "linear",
             }}
             style={{
-              width: Math.random() * 4 + 2 + "px",
-              height: Math.random() * 4 + 2 + "px",
+              width: Math.random() * 3 + 1 + "px",
+              height: Math.random() * 3 + 1 + "px",
+              background:
+                i % 2 === 0
+                  ? "linear-gradient(45deg, cyan, transparent)"
+                  : "linear-gradient(45deg, #ff00ff, transparent)",
+              boxShadow: i % 2 === 0 ? "0 0 10px cyan" : "0 0 10px #ff00ff",
+              left: "50%",
+              top: "50%",
+            }}
+          />
+        ))}
+
+        {/* Animated circuit lines */}
+        {[...Array(4)].map((_, i) => (
+          <motion.div
+            key={`line-${i}`}
+            className="absolute"
+            initial={{
+              x: Math.random() * 300 - 150,
+              y: Math.random() * 300 - 150,
+              rotate: Math.random() * 360,
+              opacity: 0.2,
+            }}
+            animate={{
+              opacity: [0.2, 0.6, 0.2],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: Math.random() * 3 + 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: Math.random() * 2,
+            }}
+            style={{
+              width: Math.random() * 60 + 20 + "px",
+              height: "1px",
+              background:
+                i % 3 === 0 ? "cyan" : i % 3 === 1 ? "#ff00ff" : "#00ff00",
+              boxShadow: `0 0 5px ${i % 3 === 0 ? "cyan" : i % 3 === 1 ? "#ff00ff" : "#00ff00"}`,
               left: "50%",
               top: "50%",
             }}
@@ -232,28 +272,48 @@ export function AnimatedEnvelope({
       </div>
 
       <div className="relative w-[340px] h-[240px] flex items-center justify-center">
-        {/* Glow Burst */}
+        {/* Neon Glow Burst */}
         <AnimatePresence>
           {status === "revealed" && (
             <motion.div
               initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: [0, 1.5, 2], opacity: [0, 0.6, 0] }}
+              animate={{ scale: [0, 2, 3], opacity: [0, 0.8, 0] }}
               transition={{ duration: 1.5, ease: "easeOut" }}
-              className="absolute z-0 w-64 h-64 rounded-full bg-linear-to-r from-amber-200 via-orange-400 to-transparent blur-3xl"
+              className="absolute z-0 w-80 h-80 rounded-full"
+              style={{
+                background: `
+                  radial-gradient(circle, 
+                    rgba(0, 255, 255, 0.4) 0%, 
+                    rgba(255, 0, 255, 0.3) 30%, 
+                    rgba(0, 255, 0, 0.2) 60%,
+                    transparent 100%
+                  )
+                `,
+                filter: "blur(20px)",
+              }}
             />
           )}
         </AnimatePresence>
 
-        {/* Shockwave Ripple */}
+        {/* Electric Shockwave Ripple */}
         <AnimatePresence>
           {status === "revealed" && (
-            <motion.div
-              initial={{ scale: 0.5, opacity: 0, borderWidth: "4px" }}
-              animate={{ scale: 2.5, opacity: [0.8, 0], borderWidth: "0px" }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-              className="absolute z-0 w-full h-full rounded-full border-amber-100/50"
-              style={{ borderRadius: "50%" }}
-            />
+            <>
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0, borderWidth: "3px" }}
+                animate={{ scale: 3, opacity: [0.9, 0], borderWidth: "0px" }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                className="absolute z-0 w-full h-full rounded-full border-cyan-400"
+                style={{ borderRadius: "50%" }}
+              />
+              <motion.div
+                initial={{ scale: 0.3, opacity: 0, borderWidth: "2px" }}
+                animate={{ scale: 2.5, opacity: [0.7, 0], borderWidth: "0px" }}
+                transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+                className="absolute z-0 w-full h-full rounded-full border-purple-400"
+                style={{ borderRadius: "50%" }}
+              />
+            </>
           )}
         </AnimatePresence>
 
@@ -294,24 +354,32 @@ export function AnimatedEnvelope({
             className="relative w-full h-full"
             style={{ transformStyle: "preserve-3d" }}
           >
-            {/* BACK OF CARD (Right Page) */}
+            {/* BACK OF CARD (Right Page) - Neon Theme */}
             <div
-              className="absolute inset-0 rounded-r-lg p-6 flex flex-col shadow-inner border border-stone-200"
+              className="absolute inset-0 rounded-r-lg p-6 flex flex-col shadow-inner border border-cyan-400/30"
               style={{
                 backgroundColor: cardColor,
                 borderLeft: "none",
+                background: `linear-gradient(135deg, ${cardColor} 0%, #0f0f2a 100%)`,
+                boxShadow: `
+                  inset 0 0 20px rgba(0, 255, 255, 0.1),
+                  0 0 20px rgba(0, 255, 255, 0.2)
+                `,
               }}
             >
-              <div className="absolute top-2 right-2 text-stone-300">
+              <div className="absolute top-2 right-2 text-cyan-400 animate-pulse">
                 <Sparkles size={16} />
               </div>
-              <div className="absolute bottom-2 left-2 text-stone-300">
+              <div
+                className="absolute bottom-2 left-2 text-purple-400 animate-pulse"
+                style={{ animationDelay: "1s" }}
+              >
                 <Sparkles size={16} />
               </div>
               <div className="mt-4 flex-1 overflow-y-auto custom-scrollbar">
                 {renderMessagePage(1, true)}
                 {renderMemories()}
-                <p className="font-serif text-2xl mt-6 text-stone-800 font-medium">
+                <p className="font-mono text-2xl mt-6 font-medium bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
                   With Love, <br /> {sender}
                 </p>
               </div>
@@ -324,49 +392,81 @@ export function AnimatedEnvelope({
               animate={{ rotateY: isCardFoldOpen ? -175 : 0 }}
               transition={{ duration: 0.8, ease: easeInOut }}
             >
-              {/* CARD FRONT (Cover) */}
+              {/* CARD FRONT (Cover) - Neon Theme */}
               <div
-                className="absolute inset-0 rounded-lg p-8 flex flex-col items-center justify-center text-center shadow-md border border-stone-200"
+                className="absolute inset-0 rounded-lg p-8 flex flex-col items-center justify-center text-center shadow-md border border-cyan-400/30 relative overflow-hidden"
                 style={{
                   backgroundColor: cardColor,
+                  background: `linear-gradient(135deg, ${cardColor} 0%, #0f0f2a 100%)`,
                   backfaceVisibility: "hidden",
                   zIndex: 2,
+                  boxShadow: `
+                    inset 0 0 20px rgba(0, 255, 255, 0.1),
+                    0 0 30px rgba(0, 255, 255, 0.2),
+                    0 0 60px rgba(255, 0, 255, 0.1)
+                  `,
                 }}
               >
-                <div className="w-10 h-10 rounded-full bg-stone-50 flex items-center justify-center mb-3">
-                  <Heart size={20} className="text-rose-500 fill-rose-500" />
+                {/* Animated background grid */}
+                <div className="absolute inset-0 opacity-10">
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage: `
+                        linear-gradient(cyan 1px, transparent 1px),
+                        linear-gradient(90deg, cyan 1px, transparent 1px)
+                      `,
+                      backgroundSize: "20px 20px",
+                      animation: "pulse 3s ease-in-out infinite",
+                    }}
+                  />
                 </div>
-                <h2 className="font-serif text-xl text-stone-800 tracking-wide font-medium mb-2">
+
+                <div className="relative z-10 w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center mb-4 animate-pulse shadow-lg shadow-cyan-400/50">
+                  <Heart size={24} className="text-white" />
+                </div>
+                <h2 className="font-mono text-xl font-bold mb-2 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-wide">
                   {title}
                 </h2>
-                <p className="font-serif text-sm text-stone-500 opacity-60">
+                <p className="font-mono text-sm text-cyan-300/80 opacity-80">
                   For: {recipient || "Someone Special"}
                 </p>
-                <div className="mt-6 flex flex-col items-center gap-2 opacity-20">
-                  <div className="w-4 h-4 rounded-full border border-stone-400 rotate-45" />
-                  <p className="text-[7px] uppercase tracking-[0.4em] font-bold text-stone-950">
-                    Reveal
+                <div className="mt-6 flex flex-col items-center gap-2 opacity-40">
+                  <div
+                    className="w-6 h-6 rounded-full border-2 border-cyan-400 animate-spin"
+                    style={{
+                      background: `conic-gradient(from 0deg, transparent, cyan, transparent)`,
+                    }}
+                  />
+                  <p className="text-[8px] uppercase tracking-[0.4em] font-bold text-cyan-400">
+                    Decrypt
                   </p>
                 </div>
               </div>
 
-              {/* CARD INSIDE LEFT */}
+              {/* CARD INSIDE LEFT - Neon Theme */}
               <div
-                className="absolute inset-0 rounded-l-lg p-6 bg-white backface-hidden flex flex-col border border-stone-200"
+                className="absolute inset-0 rounded-l-lg p-6 backface-hidden flex flex-col border border-cyan-400/30"
                 style={{
-                  backgroundColor: cardColor,
+                  background: `linear-gradient(135deg, ${cardColor} 0%, #0f0f2a 100%)`,
                   transform: "rotateY(180deg)",
                   backfaceVisibility: "hidden",
                   borderRight: "none",
+                  boxShadow: `
+                    inset 0 0 20px rgba(0, 255, 255, 0.1),
+                    0 0 20px rgba(0, 255, 255, 0.2)
+                  `,
                 }}
               >
                 <div className="mt-4 flex-1 overflow-y-auto custom-scrollbar">
                   {renderMessagePage(0)}
                   {!messageChunks[0] && (
-                    <div className="flex-1 flex flex-col items-center justify-center text-center opacity-[0.05] h-full">
-                      <Heart size={48} />
-                      <p className="text-[10px] mt-2 font-bold uppercase tracking-widest">
-                        Always & Forever
+                    <div className="flex-1 flex flex-col items-center justify-center text-center opacity-[0.2] h-full">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center animate-pulse">
+                        <Heart size={24} className="text-white" />
+                      </div>
+                      <p className="text-[10px] mt-3 font-bold uppercase tracking-widest text-cyan-400">
+                        Connected & Infinite
                       </p>
                     </div>
                   )}
@@ -407,16 +507,32 @@ export function AnimatedEnvelope({
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
             <div
-              className="w-full h-[240px] shadow-inner relative"
+              className="w-full h-[240px] shadow-inner relative overflow-hidden"
               style={{
                 background: `linear-gradient(to bottom right, ${envelopeColor}, ${flapBackColor})`,
+                boxShadow: `
+                  inset 0 0 50px rgba(0, 255, 255, 0.1),
+                  0 0 30px rgba(0, 255, 255, 0.2),
+                  0 0 60px rgba(255, 0, 255, 0.1)
+                `,
               }}
             >
-              <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-purple-500/10"></div>
               <div
                 className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-170 border-l-transparent border-r-170 border-r-transparent border-t-140 drop-shadow-md origin-top"
-                style={{ borderTopColor: flapColor }}
+                style={{
+                  borderTopColor: flapColor,
+                  filter: `drop-shadow(0 0 10px rgba(0, 255, 255, 0.3))`,
+                }}
               ></div>
+              {/* Animated neon lines */}
+              <div className="absolute inset-0 opacity-30">
+                <div className="absolute top-1/4 left-1/4 w-1/2 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-pulse"></div>
+                <div
+                  className="absolute top-3/4 left-1/3 w-1/3 h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent animate-pulse"
+                  style={{ animationDelay: "1s" }}
+                ></div>
+              </div>
             </div>
           </motion.div>
 
@@ -445,16 +561,25 @@ export function AnimatedEnvelope({
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
             <div
-              className="w-full h-[240px] absolute bottom-0 shadow-inner flex items-end justify-center"
+              className="w-full h-[240px] absolute bottom-0 shadow-inner flex items-end justify-center relative overflow-hidden"
               style={{
                 background: `linear-gradient(to top right, ${pocketColor}, ${envelopeColor})`,
+                boxShadow: `
+                  inset 0 0 50px rgba(0, 255, 255, 0.1),
+                  0 0 30px rgba(0, 255, 255, 0.2),
+                  0 0 60px rgba(255, 0, 255, 0.1)
+                `,
               }}
             >
-              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
-              <div
-                className="w-0 h-0 border-l-170 border-l-transparent border-r-170 border-r-transparent border-b-120 absolute bottom-0"
-                style={{ borderBottomColor: `${pocketColor}cc` }}
-              ></div>
+              <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 via-transparent to-cyan-500/10"></div>
+              {/* Animated circuit pattern */}
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute bottom-1/4 left-1/4 w-1/2 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-pulse"></div>
+                <div
+                  className="absolute bottom-1/2 right-1/4 w-1/3 h-0.5 bg-gradient-to-l from-transparent via-purple-400 to-transparent animate-pulse"
+                  style={{ animationDelay: "1.5s" }}
+                ></div>
+              </div>
             </div>
           </motion.div>
 
@@ -512,16 +637,21 @@ export function AnimatedEnvelope({
         </motion.div>
       </div>
 
-      {/* Hint Text */}
+      {/* Neon Hint Text */}
       <AnimatePresence>
         {status === "idle" && (
           <motion.p
             initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 0.6, y: 0 }}
+            animate={{ opacity: [0.5, 1, 0.5], y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute bottom-20 text-stone-400 font-light tracking-widest text-sm uppercase"
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-20 text-cyan-400 font-mono tracking-widest text-sm uppercase cursor-pointer"
+            onClick={handleOpen}
+            style={{
+              textShadow: "0 0 10px rgba(0, 255, 255, 0.5)",
+            }}
           >
-            Tap seal to open
+            › Execute decrypt.exe
           </motion.p>
         )}
       </AnimatePresence>

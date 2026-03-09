@@ -18,6 +18,7 @@ import {
 import { AnimatedEnvelope as AnimatedEnvelope1 } from "@/components/AnimatedEnvelope/AnimatedEnvelope";
 import { AnimatedEnvelope as AnimatedEnvelope2 } from "@/components/AnimatedEnvelope/AnimatedEnvelope2";
 import { AnimatedEnvelope as AnimatedEnvelope3 } from "@/components/AnimatedEnvelope/AnimatedEnvelope3";
+import { AnimatedEnvelope as AnimatedEnvelope4 } from "@/components/AnimatedEnvelope/AnimatedEnvelope4";
 import Image from "next/image";
 import { compressImage } from "@/lib/compress-image";
 // Type Definitions
@@ -1705,7 +1706,7 @@ export default function CondolenceForm() {
                   />
 
                   <div className="scale-75 md:scale-100 origin-center transition-transform duration-500">
-                    {formData.animationVariant === "Classic" && (
+                    {formData.envelopeStyle === "Romantic" && (
                       <AnimatedEnvelope1
                         title={formData.title}
                         recipient={formData.lovedOneName}
@@ -1716,48 +1717,9 @@ export default function CondolenceForm() {
                         pagePhotos={formData.pagePhotos}
                         categories={formData.categories}
                         music={formData.musicUrl}
-                        {...(formData.envelopeStyle === "Romantic"
-                          ? {
-                              envelopeColor: "#FFB6C1",
-                              pocketColor: "#FFB6C1",
-                              flapColor: "#FFC0CB",
-                              flapBackColor: "#DB7093",
-                              cardColor: "#FFF0F5",
-                              titleColor: "#9D174D",
-                              textColor: "#BE185D",
-                            }
-                          : formData.envelopeStyle === "Vintage"
-                            ? {
-                                envelopeColor: "#D4A574",
-                                pocketColor: "#D4A574",
-                                flapColor: "#DEB887",
-                                flapBackColor: "#C49A6C",
-                                cardColor: "#FEFCF3",
-                                titleColor: "#5D4037",
-                                textColor: "#8D6E63",
-                              }
-                            : formData.envelopeStyle === "Midnight"
-                              ? {
-                                  envelopeColor: "#18181b",
-                                  pocketColor: "#18181b",
-                                  flapColor: "#27272a",
-                                  flapBackColor: "#09090b",
-                                  cardColor: "#FDFBF7",
-                                  textColor: "#57534e",
-                                  titleColor: "#1c1917",
-                                }
-                              : {
-                                  envelopeColor: "rgba(255, 255, 255, 0.1)",
-                                  pocketColor: "rgba(255, 255, 255, 0.1)",
-                                  flapColor: "rgba(255, 255, 255, 0.2)",
-                                  flapBackColor: "rgba(255, 255, 255, 0.05)",
-                                  cardColor: "rgba(255, 255, 255, 0.9)",
-                                  titleColor: "#333",
-                                  textColor: "#666",
-                                })}
                       />
                     )}
-                    {formData.animationVariant === "Elegant" && (
+                    {formData.envelopeStyle === "Vintage" && (
                       <AnimatedEnvelope2
                         title={formData.title}
                         recipient={formData.lovedOneName}
@@ -1768,48 +1730,9 @@ export default function CondolenceForm() {
                         pagePhotos={formData.pagePhotos}
                         categories={formData.categories}
                         music={formData.musicUrl}
-                        {...(formData.envelopeStyle === "Romantic"
-                          ? {
-                              envelopeColor: "#FFB6C1",
-                              pocketColor: "#FFB6C1",
-                              flapColor: "#FFC0CB",
-                              flapBackColor: "#DB7093",
-                              cardColor: "#FFF0F5",
-                              titleColor: "#9D174D",
-                              textColor: "#BE185D",
-                            }
-                          : formData.envelopeStyle === "Vintage"
-                            ? {
-                                envelopeColor: "#f5e6d0",
-                                pocketColor: "#ede0cc",
-                                flapColor: "#e8d5bc",
-                                flapBackColor: "#f5e6d0",
-                                cardColor: "#fffcf5",
-                                titleColor: "#1e293b",
-                                textColor: "#475569",
-                              }
-                            : formData.envelopeStyle === "Midnight"
-                              ? {
-                                  envelopeColor: "#1a1a1a",
-                                  pocketColor: "#111111",
-                                  flapColor: "#2a2a2a",
-                                  flapBackColor: "#1a1a1a",
-                                  cardColor: "#FDFBF7",
-                                  textColor: "#57534e",
-                                  titleColor: "#1c1917",
-                                }
-                              : {
-                                  envelopeColor: "rgba(255, 255, 255, 0.1)",
-                                  pocketColor: "rgba(255, 255, 255, 0.1)",
-                                  flapColor: "rgba(255, 255, 255, 0.2)",
-                                  flapBackColor: "rgba(255, 255, 255, 0.05)",
-                                  cardColor: "rgba(255, 255, 255, 0.9)",
-                                  titleColor: "#333",
-                                  textColor: "#666",
-                                })}
                       />
                     )}
-                    {formData.animationVariant === "Dramatic" && (
+                    {formData.envelopeStyle === "Midnight" && (
                       <AnimatedEnvelope3
                         title={formData.title}
                         recipient={formData.lovedOneName}
@@ -1820,45 +1743,19 @@ export default function CondolenceForm() {
                         pagePhotos={formData.pagePhotos}
                         categories={formData.categories}
                         music={formData.musicUrl}
-                        {...(formData.envelopeStyle === "Romantic"
-                          ? {
-                              envelopeColor: "#FFB6C1",
-                              pocketColor: "#FFB6C1",
-                              flapColor: "#FFC0CB",
-                              flapBackColor: "#DB7093",
-                              cardColor: "#FFF0F5",
-                              titleColor: "#9D174D",
-                              textColor: "#BE185D",
-                            }
-                          : formData.envelopeStyle === "Vintage"
-                            ? {
-                                envelopeColor: "#f5e6d0",
-                                pocketColor: "#ede0cc",
-                                flapColor: "#e8d5bc",
-                                flapBackColor: "#f5e6d0",
-                                cardColor: "#fffcf5",
-                                titleColor: "#1e293b",
-                                textColor: "#475569",
-                              }
-                            : formData.envelopeStyle === "Midnight"
-                              ? {
-                                  envelopeColor: "#1a1a1a",
-                                  pocketColor: "#111111",
-                                  flapColor: "#2a2a2a",
-                                  flapBackColor: "#1a1a1a",
-                                  cardColor: "#FDFBF7",
-                                  textColor: "#57534e",
-                                  titleColor: "#1c1917",
-                                }
-                              : {
-                                  envelopeColor: "rgba(255, 255, 255, 0.1)",
-                                  pocketColor: "rgba(255, 255, 255, 0.1)",
-                                  flapColor: "rgba(255, 255, 255, 0.2)",
-                                  flapBackColor: "rgba(255, 255, 255, 0.05)",
-                                  cardColor: "rgba(255, 255, 255, 0.9)",
-                                  titleColor: "#333",
-                                  textColor: "#666",
-                                })}
+                      />
+                    )}
+                    {formData.envelopeStyle === "Modern" && (
+                      <AnimatedEnvelope4
+                        title={formData.title}
+                        recipient={formData.lovedOneName}
+                        sender={formData.yourName || "Someone special"}
+                        message={formData.message}
+                        isOpen={isPreviewOpen}
+                        onOpenChange={setIsPreviewOpen}
+                        pagePhotos={formData.pagePhotos}
+                        categories={formData.categories}
+                        music={formData.musicUrl}
                       />
                     )}
                   </div>
