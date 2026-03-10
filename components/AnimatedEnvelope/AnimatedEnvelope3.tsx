@@ -155,6 +155,15 @@ export function AnimatedEnvelope({
     ),
   ];
 
+  // Fix page numbering for memory items
+  let currentMemoryPageIndex = messageChunks.length + 1;
+  allContentChunks.forEach((chunk) => {
+    if (chunk.type === "memory") {
+      (chunk as any).page = currentMemoryPageIndex++;
+      (chunk as any).total = totalPages;
+    }
+  });
+
   // Pair chunks into leaves (front/back)
   for (let i = 0; i < allContentChunks.length; i += 2) {
     leaves.push({
@@ -286,7 +295,7 @@ export function AnimatedEnvelope({
 
     if (content.type === "signature") {
       return (
-        <div className="flex-1 flex flex-col h-full">
+        <div className="flex-1 flex flex-col h-full text-center">
           <div className="flex-1 flex flex-col items-center justify-center">
             <div className="mb-6 opacity-30">
               <Heart size={48} className="text-cyan-400" />
@@ -328,17 +337,16 @@ export function AnimatedEnvelope({
       },
     },
     open: {
-      y: -220,
+      y: [50, -220, -25],
       opacity: 1,
       scale: 1,
       zIndex: 40,
       x: "-50%",
       transition: {
         delay: 0.6,
-        duration: 0.8,
-        type: "spring",
-        stiffness: 100,
-        damping: 20,
+        duration: 1.2,
+        times: [0, 0.6, 1],
+        ease: "easeInOut",
       },
     },
     centered: {
