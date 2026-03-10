@@ -196,36 +196,44 @@ export function AnimatedEnvelope({
 
     if (content.type === "message") {
       return (
-        <div className="flex-1 space-y-4">
-          <div className="mb-4">
+        <div className="flex-1 flex flex-col h-full min-h-0">
+          <div className="mb-4 shrink-0">
             <h3 className="font-mono text-sm font-bold text-cyan-400 tracking-wider uppercase">
               &gt; Message.log
             </h3>
             <div className="h-0.5 w-16 bg-linear-to-r from-cyan-400 to-transparent mt-2" />
           </div>
 
-          {pagePhotos[content.page - 1] && pagePhotos[content.page - 1].url && (
-            <div
-              className={`w-1/3 mb-4 ${
-                pagePhotos[content.page - 1].position === "right"
-                  ? "float-right ml-4"
-                  : "float-left mr-4"
-              }`}
-            >
-              <img
-                src={pagePhotos[content.page - 1].url}
-                alt={`Page ${content.page}`}
-                className="w-full rounded border border-cyan-400/20 object-cover aspect-3/4"
-              />
-            </div>
-          )}
+          <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 pb-2">
+            <div className="block">
+              {pagePhotos[content.page - 1] &&
+                pagePhotos[content.page - 1].url && (
+                  <div
+                    className={`w-1/3 mb-2 ${
+                      pagePhotos[content.page - 1].position === "right"
+                        ? "float-right ml-4"
+                        : "float-left mr-4"
+                    }`}
+                  >
+                    <img
+                      src={pagePhotos[content.page - 1].url}
+                      alt={`Page ${content.page}`}
+                      className="w-full rounded border border-cyan-400/20 object-cover aspect-3/4 shadow-lg"
+                    />
+                  </div>
+                )}
 
-          <div className="text-cyan-100 text-sm leading-relaxed font-mono tracking-wide">
-            {content.text}
+              <div className="text-cyan-100 text-[13px] leading-relaxed font-mono tracking-wide whitespace-pre-wrap">
+                {content.text}
+              </div>
+            </div>
           </div>
 
-          <div className="mt-6 text-xs text-cyan-400/70 font-mono">
-            Page {content.page} of {content.total}
+          <div className="mt-4 pt-2 border-t border-cyan-400/10 shrink-0 flex justify-between items-center text-[10px] text-cyan-400/60 font-mono uppercase tracking-widest">
+            <span>
+              Page {content.page} / {content.total}
+            </span>
+            {!isBack ? <span>Tap to flip ➔</span> : <span>← Tap to back</span>}
           </div>
         </div>
       );
@@ -233,35 +241,44 @@ export function AnimatedEnvelope({
 
     if (content.type === "memory") {
       return (
-        <div className="flex-1 space-y-4">
-          <div className="mb-4">
+        <div className="flex-1 flex flex-col h-full min-h-0">
+          <div className="mb-4 shrink-0">
             <h3 className="font-mono text-sm font-bold text-purple-400 tracking-wider uppercase">
               &gt; {content.categoryName}.db
             </h3>
             <div className="h-0.5 w-20 bg-linear-to-r from-purple-400 to-transparent mt-2" />
           </div>
 
-          <div className="relative aspect-square bg-black/40 border border-cyan-400/20 rounded">
-            {content.url ? (
-              <img
-                src={content.url}
-                alt={content.title}
-                className="w-full h-full object-cover rounded"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <Heart size={48} className="text-cyan-400/50" />
-              </div>
-            )}
+          <div className="flex-1 flex flex-col justify-center min-h-0 px-2">
+            <div className="relative w-full aspect-square max-h-[220px] mx-auto bg-black/40 border border-cyan-400/20 rounded-md overflow-hidden shadow-lg shadow-cyan-900/20">
+              {content.url ? (
+                <img
+                  src={content.url}
+                  alt={content.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Heart size={48} className="text-cyan-400/30 animate-pulse" />
+                </div>
+              )}
+            </div>
+
+            <div className="mt-5 space-y-1.5 shrink-0 px-2 text-center">
+              <h4 className="font-mono text-base text-cyan-300 font-semibold drop-shadow-md">
+                {content.title || "Memory Fragment"}
+              </h4>
+              <p className="font-mono text-[10px] text-cyan-400/60 uppercase tracking-[0.2em]">
+                Date: {content.date}
+              </p>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <h4 className="font-mono text-sm text-cyan-300 font-semibold">
-              {content.title || "Memory Fragment"}
-            </h4>
-            <p className="font-mono text-xs text-cyan-400/70 uppercase tracking-wider">
-              Date: {content.date}
-            </p>
+          <div className="mt-4 pt-2 border-t border-purple-400/10 shrink-0 flex justify-between items-center text-[10px] text-purple-400/60 font-mono uppercase tracking-widest">
+            <span>
+              Page {content.page} / {content.total}
+            </span>
+            {!isBack ? <span>Tap to flip ➔</span> : <span>← Tap to back</span>}
           </div>
         </div>
       );
@@ -269,7 +286,7 @@ export function AnimatedEnvelope({
 
     if (content.type === "signature") {
       return (
-        <div className="flex-1 flex flex-col justify-between items-center text-center h-full">
+        <div className="flex-1 flex flex-col h-full">
           <div className="flex-1 flex flex-col items-center justify-center">
             <div className="mb-6 opacity-30">
               <Heart size={48} className="text-cyan-400" />
@@ -325,7 +342,7 @@ export function AnimatedEnvelope({
       },
     },
     centered: {
-      y: -85,
+      y: -25,
       opacity: 1,
       scale: 1,
       zIndex: 40,
@@ -337,7 +354,7 @@ export function AnimatedEnvelope({
       },
     },
     back_closed: {
-      y: -85,
+      y: -25,
       opacity: 1,
       scale: 1,
       zIndex: 40,
@@ -403,7 +420,7 @@ export function AnimatedEnvelope({
         {/* 3D CARD */}
         <motion.div
           className="absolute left-1/2"
-          style={{ x: "-50%", top: "-80px", width: "320px", height: "460px" }}
+          style={{ x: "-50%", top: "-80px", width: "360px", height: "460px" }}
           variants={cardVariants}
           initial="closed"
           animate={
@@ -459,7 +476,7 @@ export function AnimatedEnvelope({
                   >
                     {/* FRONT FACE */}
                     <div
-                      className="absolute inset-0 rounded-l-lg rounded-r-none bg-black/80 backface-hidden shadow-inner border border-cyan-400/30 overflow-hidden p-8 flex flex-col"
+                      className="absolute inset-0 rounded-r-lg rounded-l-none bg-black/80 backface-hidden shadow-inner border border-cyan-400/30 overflow-hidden p-8 flex flex-col"
                       style={{
                         background: `
                           linear-gradient(135deg, 
@@ -470,7 +487,7 @@ export function AnimatedEnvelope({
                           radial-gradient(circle at 30% 30%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
                           radial-gradient(circle at 70% 70%, rgba(255, 0, 255, 0.08) 0%, transparent 50%)
                         `,
-                        borderRight: "none",
+                        borderLeft: "none",
                         backfaceVisibility: "hidden",
                         boxShadow: `
                           inset 0 0 30px rgba(0, 255, 255, 0.15),
