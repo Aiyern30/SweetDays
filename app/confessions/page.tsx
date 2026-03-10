@@ -36,16 +36,22 @@ const ConfessionsPage = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(
     null,
   );
+  const [filter, setFilter] = useState<string>("All");
+  const [availableStatuses, setAvailableStatuses] = useState<string[]>(["All"]);
 
   useEffect(() => {
     fetchConfessions();
-  }, []);
+  }, [filter]);
 
   const fetchConfessions = async () => {
+    setLoading(true);
     try {
-      const response = await fetch("/api/confessions/list");
+      const response = await fetch(
+        `/api/confessions/list?status=${encodeURIComponent(filter)}`,
+      );
       const data = await response.json();
       setConfessions(data.confessions || []);
+      setAvailableStatuses(data.availableStatuses || ["All"]);
     } catch (error) {
       console.error("Error fetching confessions:", error);
     } finally {
@@ -287,6 +293,25 @@ const ConfessionsPage = () => {
                 <Plus size={20} />
                 Create Confession
               </Link>
+            </div>
+          )}
+
+          {/* Filter Pills */}
+          {!loading && availableStatuses.length > 1 && (
+            <div className="flex items-center gap-2 overflow-x-auto pb-4 my-4 no-scrollbar ">
+              {availableStatuses.map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setFilter(status)}
+                  className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-all ${
+                    filter === status
+                      ? "bg-rose-500 text-white shadow-md shadow-rose-200 dark:shadow-rose-900/20"
+                      : "bg-white dark:bg-zinc-800 text-gray-600 dark:text-gray-300 hover:bg-rose-50 dark:hover:bg-rose-900/20"
+                  }`}
+                >
+                  {status}
+                </button>
+              ))}
             </div>
           )}
 
