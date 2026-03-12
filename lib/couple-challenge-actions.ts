@@ -43,7 +43,7 @@ export async function getChallenges(
       .single();
 
     if (!relationshipData)
-      return { success: false, error: "No active relationship" };
+      return { success: false, error: "No active relationship", userId: user.id, noPartner: true };
 
     let query = supabase
       .from("couple_challenges")

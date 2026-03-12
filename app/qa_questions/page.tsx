@@ -7,6 +7,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { QAFilters } from "@/components/qa/QAFilters";
 import { Suspense } from "react";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
+import { InvitePartnerCard } from "@/components/InvitePartnerCards";
 
 export const dynamic = "force-dynamic";
 
@@ -19,10 +20,26 @@ export default async function QADashboard({
   const sortBy = params?.sortBy || "date_desc";
   const filter = params?.filter || "all";
 
-  const { success, sessions, error, userId } = await getQASessions(
+  const { success, sessions, error, userId, noPartner } = await getQASessions(
     sortBy as any,
     filter as any,
   );
+
+  if (noPartner) {
+    return (
+      <NavigationSidebar>
+        <div className="min-h-screen flex items-center justify-center bg-rose-50/30 px-4 pb-32">
+          <div className="fixed inset-0 pointer-events-none z-0">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-rose-600/10 blur-[120px] rounded-full" />
+            <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-amber-600/5 blur-[100px] rounded-full" />
+          </div>
+          <div className="max-w-md w-full z-10">
+            <InvitePartnerCard />
+          </div>
+        </div>
+      </NavigationSidebar>
+    );
+  }
 
   if (!success || !userId) {
     return (

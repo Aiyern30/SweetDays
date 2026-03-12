@@ -8,6 +8,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { QuizFilters } from "@/components/quiz/QuizFilters";
 import { Suspense } from "react";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
+import { InvitePartnerCard } from "@/components/InvitePartnerCards";
 
 export const dynamic = "force-dynamic";
 
@@ -20,10 +21,26 @@ export default async function QuizDashboard({
   const sortBy = params?.sortBy || "date_desc";
   const filter = params?.filter || "all";
 
-  const { success, quizzes, error, userId } = await getQuizzes(
+  const { success, quizzes, error, userId, noPartner } = await getQuizzes(
     sortBy as any,
     filter as any,
   );
+
+  if (noPartner) {
+    return (
+      <NavigationSidebar>
+        <div className="min-h-screen flex items-center justify-center bg-rose-50/30 px-4 pb-32">
+          <div className="fixed inset-0 pointer-events-none z-0">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-150 h-75 bg-pink-600/10 blur-[120px] rounded-full" />
+            <div className="absolute bottom-0 right-0 w-100 h-75 bg-violet-600/8 blur-[100px] rounded-full" />
+          </div>
+          <div className="max-w-md w-full z-10">
+            <InvitePartnerCard />
+          </div>
+        </div>
+      </NavigationSidebar>
+    );
+  }
 
   if (!success || !userId) {
     return (

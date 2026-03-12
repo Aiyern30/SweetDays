@@ -6,6 +6,7 @@ import { GoalCard } from "@/components/goals/GoalCard";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Suspense } from "react";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
+import { InvitePartnerCard } from "@/components/InvitePartnerCards";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,23 @@ export default async function SharedGoalsDashboard({
   const params = await searchParams;
   const filter = params?.filter || "active";
 
-  const { success, goals, error, userId } = await getSharedGoals(filter as any);
+  const { success, goals, error, userId, noPartner } = await getSharedGoals(filter as any);
+
+  if (noPartner) {
+    return (
+      <NavigationSidebar>
+        <div className="min-h-screen flex items-center justify-center bg-rose-50/30 px-4 pb-32">
+          <div className="fixed inset-0 pointer-events-none z-0">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-rose-600/10 blur-[120px] rounded-full" />
+            <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-sky-600/5 blur-[100px] rounded-full" />
+          </div>
+          <div className="max-w-md w-full z-10">
+            <InvitePartnerCard />
+          </div>
+        </div>
+      </NavigationSidebar>
+    );
+  }
 
   if (!success || !userId) {
     return (

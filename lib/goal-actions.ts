@@ -39,7 +39,8 @@ export async function getSharedGoals(
       .eq("status", "active")
       .single();
 
-    if (!relationshipData) return { success: false, goals: [] };
+    if (!relationshipData)
+      return { success: false, noPartner: true, goals: [], userId: user.id };
 
     let query = supabase
       .from("shared_goals")

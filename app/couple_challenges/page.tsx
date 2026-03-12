@@ -3,12 +3,29 @@ import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { ChallengeDashboard } from "@/components/challenges/ChallengeDashboard";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { InvitePartnerCard } from "@/components/InvitePartnerCards";
 
 export const dynamic = "force-dynamic";
 
 export default async function CoupleChallengesPage() {
-  const { success, challenges, userId, error, isPartner1 } =
+  const { success, challenges, userId, error, isPartner1, noPartner } =
     await getChallenges();
+
+  if (noPartner) {
+    return (
+      <NavigationSidebar>
+        <div className="min-h-screen flex items-center justify-center bg-rose-50/30 px-4 pb-32">
+          <div className="fixed inset-0 pointer-events-none z-0">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-pink-600/10 blur-[120px] rounded-full" />
+            <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-violet-600/8 blur-[100px] rounded-full" />
+          </div>
+          <div className="max-w-md w-full z-10">
+            <InvitePartnerCard />
+          </div>
+        </div>
+      </NavigationSidebar>
+    );
+  }
 
   if (!success || !userId) {
     return (
