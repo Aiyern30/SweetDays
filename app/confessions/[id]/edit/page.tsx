@@ -1273,6 +1273,56 @@ const EditConfessionPage = () => {
               </div>
 
               <div>
+                <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                  ✨ Animation Style
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {(
+                    [
+                      { id: "Classic", icon: "💌", desc: "Smooth & simple" },
+                      {
+                        id: "Wax Seal",
+                        icon: "🕯️",
+                        desc: "Classic wax reveal",
+                      },
+                      { id: "Elegant", icon: "🌸", desc: "Soft & graceful" },
+                      { id: "Dramatic", icon: "⚡", desc: "Bold entrance" },
+                    ] as { id: AnimationVariant; icon: string; desc: string }[]
+                  ).map((anim) => (
+                    <button
+                      key={anim.id}
+                      onClick={() =>
+                        handleInputChange({
+                          target: {
+                            name: "animationVariant",
+                            value: anim.id,
+                          },
+                        } as any)
+                      }
+                      className={`relative group rounded-2xl border-2 transition-all p-4 flex flex-col items-center gap-2 ${
+                        formData.animationVariant === anim.id
+                          ? "border-rose-500 bg-rose-50 dark:bg-rose-950/30 scale-105"
+                          : "border-rose-100 dark:border-rose-900/20 bg-gray-50 dark:bg-zinc-900/50 hover:border-rose-300"
+                      }`}
+                    >
+                      <span className="text-3xl">{anim.icon}</span>
+                      <div className="text-sm font-semibold text-center">
+                        {anim.id}
+                      </div>
+                      <div className="text-xs text-gray-400 text-center">
+                        {anim.desc}
+                      </div>
+                      {formData.animationVariant === anim.id && (
+                        <div className="absolute top-2 right-2 w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center text-[10px] text-white animate-in zoom-in">
+                          ✓
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
                 <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
                   🎵 Add Music{" "}
                   <span className="text-gray-400 font-normal">(Optional)</span>
@@ -1363,7 +1413,7 @@ const EditConfessionPage = () => {
                         className={`p-3 rounded-xl border flex flex-col items-center gap-1 transition-all ${
                           formData.animationVariant === variant
                             ? "border-rose-500 bg-rose-50 dark:bg-rose-500/20"
-                            : "border-transparent hover:bg-gray-50 dark:hover:bg-zinc-800"
+                            : "border-gray-200 dark:border-gray-700 hover:border-rose-300 dark:hover:border-rose-600"
                         }`}
                       >
                         <span className="text-sm font-medium">{variant}</span>
