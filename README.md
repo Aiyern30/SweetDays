@@ -1,60 +1,111 @@
-# SweetDays 💕
+<h1 align="center">💕 SweetDays</h1>
 
-**Celebrate your love story, one sweet day at a time**
+<p align="center">
+  <strong>Celebrate your love story, one sweet day at a time</strong>
+</p>
 
-SweetDays is a beautiful relationship app designed for couples to celebrate and cherish their journey together. Create lasting memories, share milestones, keep diaries, and strengthen your bond.
-
-## Features
-
-- 📸 **Gallery** - Share and preserve your precious moments together
-- 🎯 **Milestones** - Track and celebrate your relationship achievements
-- 📖 **Diaries** - Write and share your love story
-- 💌 **Confessions** - Send anonymous love notes to your partner
-- 🎮 **Pet Game** - Take care of a virtual pet together
-- 👥 **Profile** - Customize your couple's profile
-
-## Tech Stack
-
-Built with modern technologies:
-
-- **Next.js 16** - React framework
-- **TypeScript** - Type safety
-- **Supabase** - Backend & authentication
-- **Tailwind CSS** - Styling
-- **Phaser 3** - Game engine
-- **Framer Motion** - Animations
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## Environment Variables
-
-Create a `.env.local` file with your Supabase credentials:
-
-```
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-## Deploy
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new).
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<p align="center">
+  SweetDays is a beautifully designed, feature-rich web application built for couples. Create lasting memories, share heartfelt digital letters, track relationship milestones, and strengthen your bond together through games, quizzes, and shared goals.
+</p>
 
 ---
 
-Made with ❤️ for couples everywhere
+## ✨ Features & Pages
+
+The application is packed with robust tools and pages designed specifically for romantic partners:
+
+### 🏠 Core Experience
+
+- **Dashboard (`/dashboard`)**: The central hub showing a quick overview of your partner's latest activity, upcoming anniversaries, and quick links.
+- **Partner Invitations (`/invite/[token]`)**: Securely invite your partner to link accounts via email so you can share a private, synchronized data experience.
+
+### 💌 Digital Letters & Confessions
+
+- **Confession Builder (`/confessions/new` & `/confessions/[id]/edit`)**: Create stunning, animated digital envelopes. Customize the envelope style (Romantic, Vintage, Neon, Midnight), animation type (Classic, Wax Seal, Dramatic), add a Spotify/YouTube music track, and upload specific photos and special memories.
+- **Confession Viewer (`/confession/[token]`)**: Sent to your partner, this page beautifully renders the animated envelope across all devices (with dynamic responsive rotation for mobile) allowing them to "open" the letter and read your heartfelt message.
+- **Confessions List (`/confessions`)**: View the backlog of sent and received digital letters.
+
+### 💖 Couple Activities
+
+- **Couple Challenges (`/couple_challenges`)**: Take on fun, romantic challenges together to keep the spark alive.
+- **Shared Goals (`/shared_goals`)**: Create and track mutual goals (like saving for a trip, moving in together). Includes a built-in check-in dialog to log moods and notes toward each goal.
+- **Q&A Questions (`/qa_questions`)**: Answer thought-provoking prompts designed to help couples learn more about each other and spark deep conversations.
+- **Quizzes (`/quiz`)**: Test how well you know your partner with fun, interactive quizzes.
+
+### 📸 Memories & Tracking
+
+- **Gallery (`/gallery`)**: A private photo album to safely store and organize your precious moments.
+- **Milestones (`/milestones`)**: Track anniversaries, first dates, and create a romantic timeline of your relationship.
+- **Diaries (`/diaries`)**: Keep private or shared journal entries about your days together.
+- **Virtual Pet Game (`/game`)**: A gamified experience built with Phaser 3 where you and your partner co-parent a virtual pet!
+
+### ⚙️ Account Management
+
+- **Profile (`/profile`)**: Customize your avatar, name, and relationship settings.
+- **Automated Reminders (Cron Job)**: A secure backend service that automatically emails partners via Brevo if they haven't logged in for exactly 5 days, reminding them to check on their shared memories!
+
+---
+
+## 💻 Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Database & Auth**: [Supabase](https://supabase.com/)
+- **Game Engine**: [Phaser 3](https://phaser.io/) (For the couple's pet minigame)
+- **Transactional Emails**: [Brevo API](https://www.brevo.com/) (Used for Partner Invites and Inactive Reminders)
+
+---
+
+## 🚀 Getting Started
+
+Follow these steps to run the project locally.
+
+### 1. Install Dependencies
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+### 2. Environment Variables
+
+Create a \`.env.local\` file in the root directory and add the following keys:
+
+```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# Email configuration
+BREVO_API_KEY=your_brevo_api_key
+
+# Application Settings
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+CRON_SECRET=your_secure_random_string
+```
+
+### 3. Run the Development Server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+
+---
+
+## ⏰ Automated Cron Tasks
+
+This project uses Vercel Cron to trigger background tasks. Ensure your `vercel.json` contains the correct cron configuration, and that your `CRON_SECRET` environment variable is set in your Vercel Dashboard to securely trigger the inactivity reminder route at `/api/cron/inactive-reminder`. `CRON_SECRET` can be generated by typing `openssl rand -hex 32` in your terminal.
+
+---
+
+<p align="center">
+  <i>Made with ❤️ for couples everywhere.</i>
+</p>
