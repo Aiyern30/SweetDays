@@ -212,9 +212,11 @@ export default function ConfessionViewer({
         }`}
       />
 
-      <div className="max-w-4xl w-full relative z-10">
+      <div className="max-w-4xl w-full relative z-10 flex items-center justify-center">
         {/* Envelope */}
-        <div className="flex justify-center scale-90 md:scale-100 origin-center">{getEnvelopeComponent()}</div>
+        <div className="flex justify-center flex-col transform -rotate-90 scale-[0.55] sm:rotate-0 sm:scale-[0.65] md:scale-100 origin-center transition-transform duration-700">
+          {getEnvelopeComponent()}
+        </div>
       </div>
     </div>
   );

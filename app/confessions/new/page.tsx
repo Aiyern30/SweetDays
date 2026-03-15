@@ -1774,7 +1774,7 @@ export default function CondolenceForm() {
                     }`}
                   />
 
-                  <div className="scale-75 md:scale-100 origin-center transition-transform duration-500">
+                  <div className="transform -rotate-90 scale-[0.55] sm:rotate-0 sm:scale-[0.65] md:scale-100 origin-center transition-transform duration-500">
                     {(() => {
                       const getThemeColors = (style: EnvelopeStyle) => {
                         switch (style) {
