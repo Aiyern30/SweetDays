@@ -1,15 +1,19 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Love Confessions",
+  title: "My Confessions",
   description:
-    "Send and receive heartfelt love confessions. Create beautiful digital love letters with photos, themes, and personal messages.",
+    "View, manage, and send your animated digital love letters and confessions. Create beautiful envelope-style messages with photos, themes, and music for your partner.",
   keywords: [
     "love confession",
     "love letter",
     "digital love letter",
     "romantic message",
     "heartfelt confession",
+    "animated envelope",
+    "couple confessions",
+    "sweetdays confessions",
+    "love notes",
   ],
 };
 

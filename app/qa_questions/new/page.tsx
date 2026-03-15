@@ -2,6 +2,13 @@ import { QABuilder } from "@/components/qa/QABuilder";
 import { MessageCircle, ArrowLeft } from "lucide-react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "New Q&A",
+  description: "Create heartfelt questions for your partner to answer. A deeper way to connect and understand each other.",
+  keywords: ["create Q&A", "couple questions", "partner quiz", "heartfelt questions", "relationship activity"],
+};
 
 export default function NewQAPage() {
   return (

@@ -7,6 +7,13 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Suspense } from "react";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { InvitePartnerCard } from "@/components/InvitePartnerCards";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Shared Goals",
+  description: "Set and track shared goals with your partner. Dream big together, celebrate achievements, and grow as a couple.",
+  keywords: ["shared goals", "couple goals", "relationship goals", "grow together", "couple tracker", "partner goals"],
+};
 
 export const dynamic = "force-dynamic";
 

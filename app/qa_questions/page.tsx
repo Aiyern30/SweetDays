@@ -8,6 +8,13 @@ import { QAFilters } from "@/components/qa/QAFilters";
 import { Suspense } from "react";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { InvitePartnerCard } from "@/components/InvitePartnerCards";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Heartfelt Q&A",
+  description: "Ask your partner deep, heartfelt questions and share meaningful answers together to strengthen your bond.",
+  keywords: ["couple Q&A", "relationship questions", "heartfelt questions", "partner questions", "couple bonding"],
+};
 
 export const dynamic = "force-dynamic";
 

@@ -9,6 +9,13 @@ import { QuizFilters } from "@/components/quiz/QuizFilters";
 import { Suspense } from "react";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { InvitePartnerCard } from "@/components/InvitePartnerCards";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Couple Quizzes",
+  description: "Test how well you and your partner know each other with fun, personalized quizzes. Create quizzes and challenge your love!",
+  keywords: ["couple quiz", "relationship quiz", "partner quiz", "love test", "how well do you know me"],
+};
 
 export const dynamic = "force-dynamic";
 

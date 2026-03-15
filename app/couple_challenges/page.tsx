@@ -5,6 +5,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { InvitePartnerCard } from "@/components/InvitePartnerCards";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Couple Challenges",
+  description: "Take on fun, romantic challenges together to keep the spark alive.",
+  keywords: ["couple challenges", "relationship goals", "date ideas", "romantic tasks"],
+};
+
 export const dynamic = "force-dynamic";
 
 export default async function CoupleChallengesPage() {

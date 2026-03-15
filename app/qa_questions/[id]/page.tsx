@@ -6,6 +6,13 @@ import { MessageCircle, Heart, CheckCircle2, Send } from "lucide-react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Button } from "@/components/ui/button";
 import { QAAnswerForm } from "@/components/qa/QAAnswerForm";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Q&A Session",
+  description: "View and answer heartfelt questions from your partner. Share your feelings and deepen your connection.",
+  keywords: ["Q&A answers", "partner answers", "couple activity", "relationship Q&A"],
+};
 
 export const dynamic = "force-dynamic";
 
