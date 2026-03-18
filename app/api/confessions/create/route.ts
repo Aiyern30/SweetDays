@@ -16,8 +16,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Parse form data
-    const formData = await request.formData();
+    // Check content type
+    const contentType = request.headers.get("content-type") || "";
+    
+    if (!contentType.includes("multipart/form-data")) {
+      console.error("Invalid content-type:", contentType);
+      return NextResponse.json(
+        { error: `Invalid content-type: ${contentType}. Expected multipart/form-data` },
+        { status: 400 }
+      );
+    }
+
+    // Parse form data with error handling
+    let formData;
+    try {
+      formData = await request.formData();
+    } catch (parseError) {
+      console.error("FormData parsing error:", parseError);
+      return NextResponse.json(
+        { error: `Failed to parse form data: ${parseError instanceof Error ? parseError.message : "Unknown error"}` },
+        { status: 400 }
+      );
+    }
 
     // Extract confession data
     const title = formData.get("title") as string;

@@ -20,7 +20,21 @@ import { AnimatedEnvelope as AnimatedEnvelope2 } from "@/components/AnimatedEnve
 import { AnimatedEnvelope as AnimatedEnvelope3 } from "@/components/AnimatedEnvelope/AnimatedEnvelope3";
 import { AnimatedEnvelope as AnimatedEnvelope4 } from "@/components/AnimatedEnvelope/AnimatedEnvelope4";
 import Image from "next/image";
-import { compressImage } from "@/lib/compress-image";
+import { compressImage, compressImages } from "@/lib/compress-image";
+
+// Check if file size is reasonable before compression
+const checkFileSizeBeforeUpload = (file: File): boolean => {
+  const maxSizeMB = 30; // Max 30MB before compression
+  const fileSizeMB = file.size / 1024 / 1024;
+  if (fileSizeMB > maxSizeMB) {
+    alert(
+      `File too large: ${fileSizeMB.toFixed(2)}MB. Maximum is ${maxSizeMB}MB.`,
+    );
+    return false;
+  }
+  return true;
+};
+
 // Type Definitions
 interface PagePhoto {
   file: File | null;
@@ -99,12 +113,12 @@ interface MessageSuggestionsMap {
   [key: string]: MessageSuggestion[];
 }
 
-type MusicService =
-  | "YouTube"
-  | "Spotify"
-  | "Apple Music"
-  | "Deezer"
-  | "Amazon Music";
+// type MusicService =
+//   | "YouTube"
+//   | "Spotify"
+//   | "Apple Music"
+//   | "Deezer"
+//   | "Amazon Music";
 
 interface ValidationErrors {
   title?: string;
@@ -236,14 +250,6 @@ export default function CondolenceForm() {
       colors:
         "bg-zinc-950 border border-cyan-500/50 shadow-[0_0_15px_rgba(0,255,255,0.3)]",
     },
-  ];
-
-  const musicServices: MusicService[] = [
-    "YouTube",
-    "Spotify",
-    "Apple Music",
-    "Deezer",
-    "Amazon Music",
   ];
 
   // Validation Functions
@@ -438,9 +444,18 @@ export default function CondolenceForm() {
       });
 
       // Submit to API
+      // Log FormData contents for debugging
+      console.log("Submitting FormData with fields:");
+      for (const [key, value] of submitFormData.entries()) {
+        console.log(
+          `  ${key}: ${value instanceof File ? `File(${value.name}, ${value.size} bytes)` : String(value).substring(0, 50)}`,
+        );
+      }
+
       const response = await fetch("/api/confessions/create", {
         method: "POST",
         body: submitFormData,
+        // Don't manually set Content-Type - let the browser handle it
       });
 
       const result = await response.json();
@@ -461,25 +476,25 @@ export default function CondolenceForm() {
     }
   };
 
-  // Detect music service from URL
-  const detectMusicService = (url: string): MusicService | null => {
-    if (
-      url.includes("youtube.com") ||
-      url.includes("youtu.be") ||
-      url.includes("music.youtube.com")
-    ) {
-      return "YouTube";
-    } else if (url.includes("spotify.com")) {
-      return "Spotify";
-    } else if (url.includes("music.apple.com")) {
-      return "Apple Music";
-    } else if (url.includes("deezer.com")) {
-      return "Deezer";
-    } else if (url.includes("music.amazon.com")) {
-      return "Amazon Music";
-    }
-    return null;
-  };
+  // // Detect music service from URL
+  // const detectMusicService = (url: string): MusicService | null => {
+  //   if (
+  //     url.includes("youtube.com") ||
+  //     url.includes("youtu.be") ||
+  //     url.includes("music.youtube.com")
+  //   ) {
+  //     return "YouTube";
+  //   } else if (url.includes("spotify.com")) {
+  //     return "Spotify";
+  //   } else if (url.includes("music.apple.com")) {
+  //     return "Apple Music";
+  //   } else if (url.includes("deezer.com")) {
+  //     return "Deezer";
+  //   } else if (url.includes("music.amazon.com")) {
+  //     return "Amazon Music";
+  //   }
+  //   return null;
+  // };
 
   // Get character count color
   const getCharCountColor = (current: number, max: number): string => {
@@ -887,7 +902,7 @@ export default function CondolenceForm() {
                                   </label>
                                   <label className="block cursor-pointer flex-1">
                                     <div
-                                      className={`h-full min-h-60 lg:min-h-70 rounded-xl border-2 border-dashed transition-all relative overflow-hidden ${
+                                      className={`relative w-full h-60 lg:h-72 rounded-xl border-2 border-dashed transition-all overflow-hidden ${
                                         formData.pagePhotos[index]?.file
                                           ? "border-transparent"
                                           : "border-rose-200 dark:border-rose-800 hover:border-rose-400"
@@ -902,8 +917,8 @@ export default function CondolenceForm() {
                                             }
                                             alt={`Page ${index + 1} photo`}
                                             fill
+                                            sizes="100%"
                                             className="object-cover"
-                                            sizes="256px"
                                           />
                                           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center justify-center">
                                             <div className="text-center">
@@ -954,14 +969,27 @@ export default function CondolenceForm() {
                                       onChange={async (e) => {
                                         const file = e.target.files?.[0];
                                         if (file) {
+                                          // Check file size first
+                                          if (
+                                            !checkFileSizeBeforeUpload(file)
+                                          ) {
+                                            return;
+                                          }
+
                                           try {
+                                            console.log(
+                                              `Compressing page photo: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`,
+                                            );
                                             // Compress image to reduce size
                                             const compressedFile =
                                               await compressImage(
                                                 file,
-                                                0.8,
+                                                0.7,
                                                 1920,
                                               );
+                                            console.log(
+                                              `Compressed to: ${(compressedFile.size / 1024).toFixed(2)}KB`,
+                                            );
                                             const url =
                                               URL.createObjectURL(
                                                 compressedFile,
@@ -980,11 +1008,11 @@ export default function CondolenceForm() {
                                             );
                                           } catch (error) {
                                             console.error(
-                                              "Error compressing image:",
+                                              "Error compressing page photo:",
                                               error,
                                             );
                                             alert(
-                                              "Failed to process image. Please try a smaller file.",
+                                              `Failed to process image: ${error instanceof Error ? error.message : "Unknown error"}`,
                                             );
                                           }
                                         }
@@ -1288,24 +1316,65 @@ export default function CondolenceForm() {
                                 accept="image/*"
                                 multiple
                                 className="hidden"
-                                onChange={(e) => {
+                                onChange={async (e) => {
                                   const files = Array.from(
                                     e.target.files || [],
                                   );
                                   if (files.length > 0) {
-                                    const newCategories = [
-                                      ...formData.categories,
-                                    ];
-                                    files.forEach((file) => {
-                                      const url = URL.createObjectURL(file);
-                                      newCategories[catIndex].items.push({
-                                        file,
-                                        url,
-                                        title: "",
-                                        date: "",
+                                    // Filter files by size
+                                    const validFiles = files.filter(
+                                      checkFileSizeBeforeUpload,
+                                    );
+                                    if (validFiles.length === 0) {
+                                      e.target.value = "";
+                                      return;
+                                    }
+
+                                    try {
+                                      console.log(
+                                        `Compressing ${validFiles.length} images...`,
+                                      );
+                                      // Compress all images
+                                      const compressedFiles =
+                                        await compressImages(
+                                          validFiles,
+                                          0.7,
+                                          1920,
+                                        );
+                                      console.log(
+                                        "Compression complete. File sizes:",
+                                      );
+                                      compressedFiles.forEach((f, i) => {
+                                        console.log(
+                                          `  Image ${i + 1}: ${(f.size / 1024).toFixed(2)}KB`,
+                                        );
                                       });
-                                    });
-                                    updateFormData("categories", newCategories);
+
+                                      const newCategories = [
+                                        ...formData.categories,
+                                      ];
+                                      compressedFiles.forEach((file) => {
+                                        const url = URL.createObjectURL(file);
+                                        newCategories[catIndex].items.push({
+                                          file,
+                                          url,
+                                          title: "",
+                                          date: "",
+                                        });
+                                      });
+                                      updateFormData(
+                                        "categories",
+                                        newCategories,
+                                      );
+                                    } catch (error) {
+                                      console.error(
+                                        "Error compressing images:",
+                                        error,
+                                      );
+                                      alert(
+                                        `Failed to process images: ${error instanceof Error ? error.message : "Unknown error"}`,
+                                      );
+                                    }
                                   }
                                   // Reset input
                                   e.target.value = "";
@@ -1343,9 +1412,9 @@ export default function CondolenceForm() {
                                   <label className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">
                                     Upload Image
                                   </label>
-                                  <label className="block cursor-pointer flex-1">
+                                  <label className="block cursor-pointer">
                                     <div
-                                      className={`h-full min-h-35 rounded-xl border-2 border-dashed transition-colors relative overflow-hidden ${
+                                      className={`relative w-32 h-32 rounded-xl border-2 border-dashed transition-colors overflow-hidden ${
                                         item.url
                                           ? "border-transparent"
                                           : "border-rose-200 dark:border-rose-800 hover:border-rose-400"
@@ -1357,6 +1426,7 @@ export default function CondolenceForm() {
                                             src={item.url}
                                             alt="Detail"
                                             fill
+                                            sizes="128px"
                                             className="object-cover"
                                           />
                                           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -1390,14 +1460,27 @@ export default function CondolenceForm() {
                                       onChange={async (e) => {
                                         const file = e.target.files?.[0];
                                         if (file) {
+                                          // Check file size first
+                                          if (
+                                            !checkFileSizeBeforeUpload(file)
+                                          ) {
+                                            return;
+                                          }
+
                                           try {
+                                            console.log(
+                                              `Compressing category image: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`,
+                                            );
                                             // Compress image to reduce size
                                             const compressedFile =
                                               await compressImage(
                                                 file,
-                                                0.8,
+                                                0.7,
                                                 1920,
                                               );
+                                            console.log(
+                                              `Compressed to: ${(compressedFile.size / 1024).toFixed(2)}KB`,
+                                            );
                                             const url =
                                               URL.createObjectURL(
                                                 compressedFile,
@@ -1424,7 +1507,7 @@ export default function CondolenceForm() {
                                               error,
                                             );
                                             alert(
-                                              "Failed to process image. Please try a smaller file.",
+                                              `Failed to process image: ${error instanceof Error ? error.message : "Unknown error"}`,
                                             );
                                           }
                                         }
