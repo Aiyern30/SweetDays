@@ -78,6 +78,8 @@ const EVENT_TYPES = [
   { id: "other", label: "Other", icon: Calendar },
 ];
 
+const DATEPICKER_IGNORE_OUTSIDE_CLASS = "datepicker-ignore-outside-click";
+
 export function EditEventDialog({
   isOpen,
   onClose,
@@ -136,6 +138,12 @@ export function EditEventDialog({
     "November",
     "December",
   ];
+
+  const buildSafeDate = (baseDate: Date, month: number, year: number) => {
+    const day = baseDate.getDate();
+    const maxDayInTargetMonth = new Date(year, month + 1, 0).getDate();
+    return new Date(year, month, Math.min(day, maxDayInTargetMonth));
+  };
 
   if (!isOpen || !milestone) return null;
 
@@ -260,6 +268,7 @@ export function EditEventDialog({
                     dateFormat="MM/dd/yyyy"
                     className="w-full px-5 py-3.5 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 focus:bg-white dark:focus:bg-zinc-900 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all text-gray-900 dark:text-gray-100"
                     calendarClassName="custom-calendar"
+                    outsideClickIgnoreClass={DATEPICKER_IGNORE_OUTSIDE_CLASS}
                     showPopperArrow={false}
                     popperPlacement="bottom-start"
                     required
@@ -287,19 +296,33 @@ export function EditEventDialog({
                         <div className="flex gap-1">
                           <Select
                             value={date.getMonth().toString()}
-                            onValueChange={(val) => changeMonth(parseInt(val))}
+                            onValueChange={(val) => {
+                              const month = Number(val);
+                              changeMonth(month);
+                              setStartDate((prev) =>
+                                buildSafeDate(
+                                  prev ?? date,
+                                  month,
+                                  date.getFullYear(),
+                                ),
+                              );
+                            }}
                           >
                             <SelectTrigger className="h-8 w-[100px] px-2.5 py-0 text-xs font-bold rounded-lg border-gray-200">
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="rounded-xl">
+                            <SelectContent
+                              className={`rounded-xl ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
+                            >
                               {months.map((month, index) => (
                                 <SelectItem
                                   key={month}
                                   value={index.toString()}
-                                  className="text-xs"
+                                  className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                 >
-                                  {month}
+                                  <span className={DATEPICKER_IGNORE_OUTSIDE_CLASS}>
+                                    {month}
+                                  </span>
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -307,19 +330,29 @@ export function EditEventDialog({
 
                           <Select
                             value={date.getFullYear().toString()}
-                            onValueChange={(val) => changeYear(parseInt(val))}
+                            onValueChange={(val) => {
+                              const year = Number(val);
+                              changeYear(year);
+                              setStartDate((prev) =>
+                                buildSafeDate(prev ?? date, date.getMonth(), year),
+                              );
+                            }}
                           >
                             <SelectTrigger className="h-8 w-[80px] px-2.5 py-0 text-xs font-bold rounded-lg border-gray-200">
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="rounded-xl">
+                            <SelectContent
+                              className={`rounded-xl ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
+                            >
                               {years.map((year) => (
                                 <SelectItem
                                   key={year}
                                   value={year.toString()}
-                                  className="text-xs"
+                                  className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                 >
-                                  {year}
+                                  <span className={DATEPICKER_IGNORE_OUTSIDE_CLASS}>
+                                    {year}
+                                  </span>
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -355,6 +388,7 @@ export function EditEventDialog({
                       minDate={startDate || undefined}
                       className="w-full px-5 py-3.5 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 focus:bg-white dark:focus:bg-zinc-900 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all text-gray-900 dark:text-gray-100"
                       calendarClassName="custom-calendar"
+                      outsideClickIgnoreClass={DATEPICKER_IGNORE_OUTSIDE_CLASS}
                       showPopperArrow={false}
                       popperPlacement="bottom-start"
                       renderCustomHeader={({
@@ -381,21 +415,35 @@ export function EditEventDialog({
                           <div className="flex gap-1">
                             <Select
                               value={date.getMonth().toString()}
-                              onValueChange={(val) =>
-                                changeMonth(parseInt(val))
-                              }
+                              onValueChange={(val) => {
+                                const month = Number(val);
+                                changeMonth(month);
+                                setEndDate((prev) =>
+                                  buildSafeDate(
+                                    prev ?? date,
+                                    month,
+                                    date.getFullYear(),
+                                  ),
+                                );
+                              }}
                             >
                               <SelectTrigger className="h-8 w-[100px] px-2.5 py-0 text-xs font-bold rounded-lg border-gray-200">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="rounded-xl">
+                              <SelectContent
+                                className={`rounded-xl ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
+                              >
                                 {months.map((month, index) => (
                                   <SelectItem
                                     key={month}
                                     value={index.toString()}
-                                    className="text-xs"
+                                    className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                   >
-                                    {month}
+                                    <span
+                                      className={DATEPICKER_IGNORE_OUTSIDE_CLASS}
+                                    >
+                                      {month}
+                                    </span>
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -403,19 +451,31 @@ export function EditEventDialog({
 
                             <Select
                               value={date.getFullYear().toString()}
-                              onValueChange={(val) => changeYear(parseInt(val))}
+                              onValueChange={(val) => {
+                                const year = Number(val);
+                                changeYear(year);
+                                setEndDate((prev) =>
+                                  buildSafeDate(prev ?? date, date.getMonth(), year),
+                                );
+                              }}
                             >
                               <SelectTrigger className="h-8 w-[80px] px-2.5 py-0 text-xs font-bold rounded-lg border-gray-200">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="rounded-xl">
+                              <SelectContent
+                                className={`rounded-xl ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
+                              >
                                 {years.map((year) => (
                                   <SelectItem
                                     key={year}
                                     value={year.toString()}
-                                    className="text-xs"
+                                    className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                   >
-                                    {year}
+                                    <span
+                                      className={DATEPICKER_IGNORE_OUTSIDE_CLASS}
+                                    >
+                                      {year}
+                                    </span>
                                   </SelectItem>
                                 ))}
                               </SelectContent>

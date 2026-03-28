@@ -260,7 +260,9 @@ export function CreateEventDialog({
                                   value={index.toString()}
                                   className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                 >
-                                  <span className={DATEPICKER_IGNORE_OUTSIDE_CLASS}>
+                                  <span
+                                    className={DATEPICKER_IGNORE_OUTSIDE_CLASS}
+                                  >
                                     {month}
                                   </span>
                                 </SelectItem>
@@ -274,7 +276,11 @@ export function CreateEventDialog({
                               const year = Number(val);
                               changeYear(year);
                               setStartDate((prev) =>
-                                buildSafeDate(prev ?? date, date.getMonth(), year),
+                                buildSafeDate(
+                                  prev ?? date,
+                                  date.getMonth(),
+                                  year,
+                                ),
                               );
                             }}
                           >
@@ -290,7 +296,9 @@ export function CreateEventDialog({
                                   value={year.toString()}
                                   className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                 >
-                                  <span className={DATEPICKER_IGNORE_OUTSIDE_CLASS}>
+                                  <span
+                                    className={DATEPICKER_IGNORE_OUTSIDE_CLASS}
+                                  >
                                     {year}
                                   </span>
                                 </SelectItem>
@@ -378,7 +386,9 @@ export function CreateEventDialog({
                                     className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                   >
                                     <span
-                                      className={DATEPICKER_IGNORE_OUTSIDE_CLASS}
+                                      className={
+                                        DATEPICKER_IGNORE_OUTSIDE_CLASS
+                                      }
                                     >
                                       {month}
                                     </span>
@@ -393,7 +403,11 @@ export function CreateEventDialog({
                                 const year = Number(val);
                                 changeYear(year);
                                 setEndDate((prev) =>
-                                  buildSafeDate(prev ?? date, date.getMonth(), year),
+                                  buildSafeDate(
+                                    prev ?? date,
+                                    date.getMonth(),
+                                    year,
+                                  ),
                                 );
                               }}
                             >
@@ -410,7 +424,9 @@ export function CreateEventDialog({
                                     className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                   >
                                     <span
-                                      className={DATEPICKER_IGNORE_OUTSIDE_CLASS}
+                                      className={
+                                        DATEPICKER_IGNORE_OUTSIDE_CLASS
+                                      }
                                     >
                                       {year}
                                     </span>
