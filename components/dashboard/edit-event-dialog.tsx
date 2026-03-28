@@ -227,9 +227,9 @@ export function EditEventDialog({
           </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+            className="p-2 rounded-full hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-rose-400" />
           </button>
         </div>
 
@@ -242,7 +242,7 @@ export function EditEventDialog({
             )}
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">
+              <label className="text-sm font-semibold text-rose-600 dark:text-rose-300 ml-1">
                 Milestone Title
               </label>
               <input
@@ -252,13 +252,13 @@ export function EditEventDialog({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Sarah's Birthday"
-                className="w-full px-5 py-3.5 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 focus:bg-white dark:focus:bg-zinc-900 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-zinc-600 text-gray-900 dark:text-gray-100"
+                className="w-full px-5 py-3.5 rounded-2xl border-2 border-rose-200 dark:border-rose-900/40 bg-rose-50/60 dark:bg-rose-950/30 text-rose-900 dark:text-rose-100 hover:border-rose-300 dark:hover:border-rose-700/60 hover:bg-rose-50 dark:hover:bg-rose-900/20 focus:bg-white dark:focus:bg-rose-950/40 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all placeholder:text-rose-300 dark:placeholder:text-rose-700"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">
+                <label className="text-sm font-semibold text-rose-600 dark:text-rose-300 ml-1">
                   {selectedType === "other" ? "Start Date" : "Date"}
                 </label>
                 <div className="custom-datepicker-wrapper">
@@ -266,7 +266,7 @@ export function EditEventDialog({
                     selected={startDate}
                     onChange={(date: Date | null) => setStartDate(date)}
                     dateFormat="MM/dd/yyyy"
-                    className="w-full px-5 py-3.5 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 focus:bg-white dark:focus:bg-zinc-900 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all text-gray-900 dark:text-gray-100"
+                    className="w-full px-5 py-3.5 rounded-2xl border-2 border-rose-200 dark:border-rose-900/40 bg-rose-50/60 dark:bg-rose-950/30 text-rose-900 dark:text-rose-100 hover:border-rose-300 dark:hover:border-rose-700/60 hover:bg-rose-50 dark:hover:bg-rose-900/20 focus:bg-white dark:focus:bg-rose-950/40 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all"
                     calendarClassName="custom-calendar"
                     outsideClickIgnoreClass={DATEPICKER_IGNORE_OUTSIDE_CLASS}
                     showPopperArrow={false}
@@ -308,7 +308,7 @@ export function EditEventDialog({
                               );
                             }}
                           >
-                            <SelectTrigger className="h-8 w-[100px] px-2.5 py-0 text-xs font-bold rounded-lg border-gray-200">
+                            <SelectTrigger className="h-8 w-25 px-2.5 py-0 text-xs font-bold rounded-lg border-rose-100">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent
@@ -320,7 +320,9 @@ export function EditEventDialog({
                                   value={index.toString()}
                                   className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                 >
-                                  <span className={DATEPICKER_IGNORE_OUTSIDE_CLASS}>
+                                  <span
+                                    className={DATEPICKER_IGNORE_OUTSIDE_CLASS}
+                                  >
                                     {month}
                                   </span>
                                 </SelectItem>
@@ -334,11 +336,15 @@ export function EditEventDialog({
                               const year = Number(val);
                               changeYear(year);
                               setStartDate((prev) =>
-                                buildSafeDate(prev ?? date, date.getMonth(), year),
+                                buildSafeDate(
+                                  prev ?? date,
+                                  date.getMonth(),
+                                  year,
+                                ),
                               );
                             }}
                           >
-                            <SelectTrigger className="h-8 w-[80px] px-2.5 py-0 text-xs font-bold rounded-lg border-gray-200">
+                            <SelectTrigger className="h-8 w-20 px-2.5 py-0 text-xs font-bold rounded-lg border-rose-100">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent
@@ -350,7 +356,9 @@ export function EditEventDialog({
                                   value={year.toString()}
                                   className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                 >
-                                  <span className={DATEPICKER_IGNORE_OUTSIDE_CLASS}>
+                                  <span
+                                    className={DATEPICKER_IGNORE_OUTSIDE_CLASS}
+                                  >
                                     {year}
                                   </span>
                                 </SelectItem>
@@ -377,7 +385,7 @@ export function EditEventDialog({
 
               {selectedType === "other" && (
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">
+                  <label className="text-sm font-semibold text-rose-600 dark:text-rose-300 ml-1">
                     End Date (Optional)
                   </label>
                   <div className="custom-datepicker-wrapper">
@@ -386,7 +394,7 @@ export function EditEventDialog({
                       onChange={(date: Date | null) => setEndDate(date)}
                       dateFormat="MM/dd/yyyy"
                       minDate={startDate || undefined}
-                      className="w-full px-5 py-3.5 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 focus:bg-white dark:focus:bg-zinc-900 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all text-gray-900 dark:text-gray-100"
+                      className="w-full px-5 py-3.5 rounded-2xl border-2 border-rose-200 dark:border-rose-900/40 bg-rose-50/60 dark:bg-rose-950/30 text-rose-900 dark:text-rose-100 hover:border-rose-300 dark:hover:border-rose-700/60 hover:bg-rose-50 dark:hover:bg-rose-900/20 focus:bg-white dark:focus:bg-rose-950/40 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all"
                       calendarClassName="custom-calendar"
                       outsideClickIgnoreClass={DATEPICKER_IGNORE_OUTSIDE_CLASS}
                       showPopperArrow={false}
@@ -427,7 +435,7 @@ export function EditEventDialog({
                                 );
                               }}
                             >
-                              <SelectTrigger className="h-8 w-[100px] px-2.5 py-0 text-xs font-bold rounded-lg border-gray-200">
+                              <SelectTrigger className="h-8 w-25 px-2.5 py-0 text-xs font-bold rounded-lg border-rose-100">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent
@@ -440,7 +448,9 @@ export function EditEventDialog({
                                     className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                   >
                                     <span
-                                      className={DATEPICKER_IGNORE_OUTSIDE_CLASS}
+                                      className={
+                                        DATEPICKER_IGNORE_OUTSIDE_CLASS
+                                      }
                                     >
                                       {month}
                                     </span>
@@ -455,11 +465,15 @@ export function EditEventDialog({
                                 const year = Number(val);
                                 changeYear(year);
                                 setEndDate((prev) =>
-                                  buildSafeDate(prev ?? date, date.getMonth(), year),
+                                  buildSafeDate(
+                                    prev ?? date,
+                                    date.getMonth(),
+                                    year,
+                                  ),
                                 );
                               }}
                             >
-                              <SelectTrigger className="h-8 w-[80px] px-2.5 py-0 text-xs font-bold rounded-lg border-gray-200">
+                              <SelectTrigger className="h-8 w-20 px-2.5 py-0 text-xs font-bold rounded-lg border-rose-100">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent
@@ -472,7 +486,9 @@ export function EditEventDialog({
                                     className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                   >
                                     <span
-                                      className={DATEPICKER_IGNORE_OUTSIDE_CLASS}
+                                      className={
+                                        DATEPICKER_IGNORE_OUTSIDE_CLASS
+                                      }
                                     >
                                       {year}
                                     </span>
@@ -500,7 +516,7 @@ export function EditEventDialog({
               )}
 
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">
+                <label className="text-sm font-semibold text-rose-600 dark:text-rose-300 ml-1">
                   Type
                 </label>
                 <div className="relative">
@@ -517,16 +533,16 @@ export function EditEventDialog({
                       ${
                         isSelectOpen
                           ? "border-rose-500 ring-4 ring-rose-500/10 bg-white dark:bg-zinc-900"
-                          : "border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50"
+                          : "border-rose-200 dark:border-rose-900/40 bg-rose-50/60 dark:bg-rose-950/30"
                       }
                     `}
                   >
-                    <div className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                    <div className="flex items-center gap-2 text-rose-900 dark:text-rose-100">
                       <currentType.icon className="w-4 h-4 text-rose-500" />
                       <span className="font-medium">{currentType.label}</span>
                     </div>
                     <ChevronDown
-                      className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isSelectOpen ? "rotate-180" : ""}`}
+                      className={`w-4 h-4 text-rose-300 transition-transform duration-200 ${isSelectOpen ? "rotate-180" : ""}`}
                     />
                   </button>
 
@@ -536,7 +552,7 @@ export function EditEventDialog({
                         className="fixed inset-0 z-10"
                         onClick={() => setIsSelectOpen(false)}
                       />
-                      <div className="absolute top-full left-0 right-0 mt-2 z-30 bg-white dark:bg-zinc-800 border-2 border-gray-100 dark:border-zinc-700/50 rounded-2xl shadow-xl overflow-hidden py-1.5 animate-in fade-in slide-in-from-top-2 duration-200 max-h-60 overflow-y-auto">
+                      <div className="absolute top-full left-0 right-0 mt-2 z-30 bg-white dark:bg-rose-950 border-2 border-rose-100 dark:border-rose-900/40 rounded-2xl shadow-xl overflow-hidden py-1.5 animate-in fade-in slide-in-from-top-2 duration-200 max-h-60 overflow-y-auto">
                         {EVENT_TYPES.map((type) => (
                           <button
                             key={type.id}
@@ -550,7 +566,7 @@ export function EditEventDialog({
                               ${
                                 selectedType === type.id
                                   ? "bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold"
-                                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-700/50"
+                                  : "text-gray-700 dark:text-gray-300 hover:bg-rose-50 dark:hover:bg-rose-900/20"
                               }
                             `}
                           >
@@ -568,7 +584,7 @@ export function EditEventDialog({
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">
+              <label className="text-sm font-semibold text-rose-600 dark:text-rose-300 ml-1">
                 Description (Optional)
               </label>
               <textarea
@@ -577,15 +593,15 @@ export function EditEventDialog({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Add some details..."
-                className="w-full px-5 py-3.5 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 focus:bg-white dark:focus:bg-zinc-900 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all resize-none placeholder:text-gray-400 dark:placeholder:text-zinc-600 text-gray-900 dark:text-gray-100"
+                className="w-full px-5 py-3.5 rounded-2xl border-2 border-rose-200 dark:border-rose-900/40 bg-rose-50/60 dark:bg-rose-950/30 text-rose-900 dark:text-rose-100 hover:border-rose-300 dark:hover:border-rose-700/60 hover:bg-rose-50 dark:hover:bg-rose-900/20 focus:bg-white dark:focus:bg-rose-950/40 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all resize-none placeholder:text-rose-300 dark:placeholder:text-rose-700"
               />
             </div>
 
             {/* Reminder Section */}
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1 flex items-center gap-2">
-                  <Bell className="w-4 h-4 text-gray-400" />
+                <label className="text-sm font-semibold text-rose-600 dark:text-rose-300 ml-1 flex items-center gap-2">
+                  <Bell className="w-4 h-4 text-pink-400" />
                   Reminder
                 </label>
                 <div className="relative">
@@ -605,15 +621,15 @@ export function EditEventDialog({
                       ${
                         isReminderSelectOpen
                           ? "border-rose-500 ring-4 ring-rose-500/10 bg-white dark:bg-zinc-900"
-                          : "border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50"
+                          : "border-rose-200 dark:border-rose-900/40 bg-rose-50/60 dark:bg-rose-950/30"
                       }
                     `}
                   >
-                    <span className="text-gray-900 dark:text-gray-100 font-medium">
+                    <span className="text-rose-900 dark:text-rose-100 font-medium">
                       {currentReminder.label}
                     </span>
                     <ChevronDown
-                      className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+                      className={`w-4 h-4 text-rose-300 transition-transform duration-200 ${
                         isReminderSelectOpen ? "rotate-180" : ""
                       }`}
                     />
@@ -625,7 +641,7 @@ export function EditEventDialog({
                         className="fixed inset-0 z-10"
                         onClick={() => setIsReminderSelectOpen(false)}
                       />
-                      <div className="absolute top-full left-0 right-0 mt-2 z-30 bg-white dark:bg-zinc-800 border-2 border-gray-100 dark:border-zinc-700/50 rounded-2xl shadow-xl overflow-hidden py-1.5 animate-in fade-in slide-in-from-top-2 duration-200 max-h-60 overflow-y-auto">
+                      <div className="absolute top-full left-0 right-0 mt-2 z-30 bg-white dark:bg-rose-950 border-2 border-rose-100 dark:border-rose-900/40 rounded-2xl shadow-xl overflow-hidden py-1.5 animate-in fade-in slide-in-from-top-2 duration-200 max-h-60 overflow-y-auto">
                         {REMINDER_TYPES.map((reminder) => (
                           <button
                             key={reminder.id}
@@ -639,7 +655,7 @@ export function EditEventDialog({
                               ${
                                 selectedReminder === reminder.id
                                   ? "bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold"
-                                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-700/50"
+                                  : "text-gray-700 dark:text-gray-300 hover:bg-rose-50 dark:hover:bg-rose-900/20"
                               }
                             `}
                           >
@@ -654,26 +670,26 @@ export function EditEventDialog({
 
               {selectedReminder === "day_of" && (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">
+                  <label className="text-sm font-medium text-rose-600 dark:text-rose-300 ml-1">
                     Reminder Time
                   </label>
                   <input
                     name="reminderTime"
                     type="time"
                     defaultValue={milestone?.reminder_time || "09:00"}
-                    className="w-full px-5 py-3.5 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 focus:bg-white dark:focus:bg-zinc-900 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all text-gray-900 dark:text-gray-100"
+                    className="w-full px-5 py-3.5 rounded-2xl border-2 border-rose-200 dark:border-rose-900/40 bg-rose-50/60 dark:bg-rose-950/30 text-rose-900 dark:text-rose-100 hover:border-rose-300 dark:hover:border-rose-700/60 hover:bg-rose-50 dark:hover:bg-rose-900/20 focus:bg-white dark:focus:bg-rose-950/40 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all"
                   />
                 </div>
               )}
 
               {selectedReminder === "in_advance" && (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">
+                  <label className="text-sm font-medium text-rose-600 dark:text-rose-300 ml-1">
                     Remind Before
                   </label>
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <label className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                      <label className="text-xs text-rose-500 dark:text-rose-400 ml-1">
                         Days
                       </label>
                       <input
@@ -684,7 +700,7 @@ export function EditEventDialog({
                       <select
                         value={selectedDays}
                         onChange={(e) => setSelectedDays(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all text-sm text-gray-900 dark:text-gray-100"
+                        className="w-full px-3 py-2.5 rounded-xl border-2 border-rose-200 dark:border-rose-900/40 bg-rose-50/60 dark:bg-rose-950/30 focus:bg-white dark:focus:bg-rose-950/40 focus:ring-2 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all text-sm text-rose-900 dark:text-rose-100"
                       >
                         {DAY_OPTIONS.slice(0, 31).map((opt) => (
                           <option key={opt.value} value={opt.value}>
@@ -694,7 +710,7 @@ export function EditEventDialog({
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                      <label className="text-xs text-rose-500 dark:text-rose-400 ml-1">
                         Hours
                       </label>
                       <input
@@ -705,7 +721,7 @@ export function EditEventDialog({
                       <select
                         value={selectedHours}
                         onChange={(e) => setSelectedHours(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all text-sm text-gray-900 dark:text-gray-100"
+                        className="w-full px-3 py-2.5 rounded-xl border-2 border-rose-200 dark:border-rose-900/40 bg-rose-50/60 dark:bg-rose-950/30 focus:bg-white dark:focus:bg-rose-950/40 focus:ring-2 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all text-sm text-rose-900 dark:text-rose-100"
                       >
                         {HOUR_OPTIONS.map((opt) => (
                           <option key={opt.value} value={opt.value}>
@@ -715,7 +731,7 @@ export function EditEventDialog({
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                      <label className="text-xs text-rose-500 dark:text-rose-400 ml-1">
                         Minutes
                       </label>
                       <input
@@ -726,7 +742,7 @@ export function EditEventDialog({
                       <select
                         value={selectedMinutes}
                         onChange={(e) => setSelectedMinutes(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all text-sm text-gray-900 dark:text-gray-100"
+                        className="w-full px-3 py-2.5 rounded-xl border-2 border-rose-200 dark:border-rose-900/40 bg-rose-50/60 dark:bg-rose-950/30 focus:bg-white dark:focus:bg-rose-950/40 focus:ring-2 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all text-sm text-rose-900 dark:text-rose-100"
                       >
                         {MINUTE_OPTIONS.map((opt) => (
                           <option key={opt.value} value={opt.value}>
