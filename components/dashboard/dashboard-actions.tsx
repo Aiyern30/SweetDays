@@ -27,7 +27,7 @@ export function DashboardActions() {
       description: "The classic Yes/No game",
       icon: <Smile className="w-6 h-6 text-pink-500" />,
       color: "bg-pink-50 dark:bg-pink-900/20",
-      href: "/ask",
+      href: "/qa_questions",
     },
     {
       title: "Upload Memory",
