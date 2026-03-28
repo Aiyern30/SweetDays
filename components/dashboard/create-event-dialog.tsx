@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createMilestone } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
@@ -67,12 +67,15 @@ const EVENT_TYPES = [
   { id: "other", label: "Other", icon: Calendar },
 ];
 
+const DATEPICKER_IGNORE_OUTSIDE_CLASS = "datepicker-ignore-outside-click";
+
 export function CreateEventDialog({
   isOpen,
   onClose,
   selectedDate,
 }: CreateEventDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const isSubmittingRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState(EVENT_TYPES[0].id);
   const [selectedReminder, setSelectedReminder] = useState(
@@ -120,8 +123,17 @@ export function CreateEventDialog({
     "December",
   ];
 
+  const buildSafeDate = (baseDate: Date, month: number, year: number) => {
+    const day = baseDate.getDate();
+    const maxDayInTargetMonth = new Date(year, month + 1, 0).getDate();
+    return new Date(year, month, Math.min(day, maxDayInTargetMonth));
+  };
+
   async function handleSubmit(formData: FormData) {
+    if (isSubmittingRef.current) return;
+
     try {
+      isSubmittingRef.current = true;
       setIsLoading(true);
       setError(null);
 
@@ -152,6 +164,7 @@ export function CreateEventDialog({
       setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
+      isSubmittingRef.current = false;
     }
   }
 
@@ -195,6 +208,7 @@ export function CreateEventDialog({
                     dateFormat="MM/dd/yyyy"
                     className="w-full px-5 py-3.5 rounded-2xl border-2 border-rose-200 dark:border-rose-900/40 bg-rose-50/60 dark:bg-rose-950/30 text-rose-900 dark:text-rose-100 hover:border-rose-300 dark:hover:border-rose-700/60 hover:bg-rose-50 dark:hover:bg-rose-900/20 focus:bg-white dark:focus:bg-rose-950/40 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all"
                     calendarClassName="custom-calendar"
+                    outsideClickIgnoreClass={DATEPICKER_IGNORE_OUTSIDE_CLASS}
                     showPopperArrow={false}
                     popperPlacement="bottom-start"
                     required
@@ -209,6 +223,7 @@ export function CreateEventDialog({
                     }) => (
                       <div className="flex items-center justify-between px-2 py-2 gap-2">
                         <Button
+                          type="button"
                           onClick={decreaseMonth}
                           disabled={prevMonthButtonDisabled}
                           variant="ghost"
@@ -221,19 +236,33 @@ export function CreateEventDialog({
                         <div className="flex gap-1">
                           <Select
                             value={date.getMonth().toString()}
-                            onValueChange={(val) => changeMonth(parseInt(val))}
+                            onValueChange={(val) => {
+                              const month = Number(val);
+                              changeMonth(month);
+                              setStartDate((prev) =>
+                                buildSafeDate(
+                                  prev ?? date,
+                                  month,
+                                  date.getFullYear(),
+                                ),
+                              );
+                            }}
                           >
                             <SelectTrigger className="h-8 w-[100px] px-2.5 py-0 text-xs font-bold rounded-lg border-rose-100">
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="rounded-xl">
+                            <SelectContent
+                              className={`rounded-xl ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
+                            >
                               {months.map((month, index) => (
                                 <SelectItem
                                   key={month}
                                   value={index.toString()}
-                                  className="text-xs"
+                                  className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                 >
-                                  {month}
+                                  <span className={DATEPICKER_IGNORE_OUTSIDE_CLASS}>
+                                    {month}
+                                  </span>
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -241,19 +270,29 @@ export function CreateEventDialog({
 
                           <Select
                             value={date.getFullYear().toString()}
-                            onValueChange={(val) => changeYear(parseInt(val))}
+                            onValueChange={(val) => {
+                              const year = Number(val);
+                              changeYear(year);
+                              setStartDate((prev) =>
+                                buildSafeDate(prev ?? date, date.getMonth(), year),
+                              );
+                            }}
                           >
                             <SelectTrigger className="h-8 w-[80px] px-2.5 py-0 text-xs font-bold rounded-lg border-rose-100">
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="rounded-xl">
+                            <SelectContent
+                              className={`rounded-xl ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
+                            >
                               {years.map((year) => (
                                 <SelectItem
                                   key={year}
                                   value={year.toString()}
-                                  className="text-xs"
+                                  className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                 >
-                                  {year}
+                                  <span className={DATEPICKER_IGNORE_OUTSIDE_CLASS}>
+                                    {year}
+                                  </span>
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -261,6 +300,7 @@ export function CreateEventDialog({
                         </div>
 
                         <Button
+                          type="button"
                           onClick={increaseMonth}
                           disabled={nextMonthButtonDisabled}
                           variant="ghost"
@@ -286,6 +326,7 @@ export function CreateEventDialog({
                       minDate={startDate || undefined}
                       className="w-full px-5 py-3.5 rounded-2xl border-2 border-rose-200 dark:border-rose-900/40 bg-rose-50/60 dark:bg-rose-950/30 text-rose-900 dark:text-rose-100 hover:border-rose-300 dark:hover:border-rose-700/60 hover:bg-rose-50 dark:hover:bg-rose-900/20 focus:bg-white dark:focus:bg-rose-950/40 focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none transition-all"
                       calendarClassName="custom-calendar"
+                      outsideClickIgnoreClass={DATEPICKER_IGNORE_OUTSIDE_CLASS}
                       showPopperArrow={false}
                       popperPlacement="bottom-start"
                       renderCustomHeader={({
@@ -299,6 +340,7 @@ export function CreateEventDialog({
                       }) => (
                         <div className="flex items-center justify-between px-2 py-2 gap-2">
                           <Button
+                            type="button"
                             onClick={decreaseMonth}
                             disabled={prevMonthButtonDisabled}
                             variant="ghost"
@@ -311,21 +353,35 @@ export function CreateEventDialog({
                           <div className="flex gap-1">
                             <Select
                               value={date.getMonth().toString()}
-                              onValueChange={(val) =>
-                                changeMonth(parseInt(val))
-                              }
+                              onValueChange={(val) => {
+                                const month = Number(val);
+                                changeMonth(month);
+                                setEndDate((prev) =>
+                                  buildSafeDate(
+                                    prev ?? date,
+                                    month,
+                                    date.getFullYear(),
+                                  ),
+                                );
+                              }}
                             >
                               <SelectTrigger className="h-8 w-[100px] text-xs font-bold rounded-lg border-rose-100">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="rounded-xl">
+                              <SelectContent
+                                className={`rounded-xl ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
+                              >
                                 {months.map((month, index) => (
                                   <SelectItem
                                     key={month}
                                     value={index.toString()}
-                                    className="text-xs"
+                                    className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                   >
-                                    {month}
+                                    <span
+                                      className={DATEPICKER_IGNORE_OUTSIDE_CLASS}
+                                    >
+                                      {month}
+                                    </span>
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -333,19 +389,31 @@ export function CreateEventDialog({
 
                             <Select
                               value={date.getFullYear().toString()}
-                              onValueChange={(val) => changeYear(parseInt(val))}
+                              onValueChange={(val) => {
+                                const year = Number(val);
+                                changeYear(year);
+                                setEndDate((prev) =>
+                                  buildSafeDate(prev ?? date, date.getMonth(), year),
+                                );
+                              }}
                             >
                               <SelectTrigger className="h-8 w-[80px] text-xs font-bold rounded-lg border-rose-100">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="rounded-xl">
+                              <SelectContent
+                                className={`rounded-xl ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
+                              >
                                 {years.map((year) => (
                                   <SelectItem
                                     key={year}
                                     value={year.toString()}
-                                    className="text-xs"
+                                    className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                   >
-                                    {year}
+                                    <span
+                                      className={DATEPICKER_IGNORE_OUTSIDE_CLASS}
+                                    >
+                                      {year}
+                                    </span>
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -353,6 +421,7 @@ export function CreateEventDialog({
                           </div>
 
                           <Button
+                            type="button"
                             onClick={increaseMonth}
                             disabled={nextMonthButtonDisabled}
                             variant="ghost"
