@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import ConfessionViewer from "./confession-viewer";
 
@@ -10,10 +10,11 @@ interface PageProps {
 
 export default async function ConfessionPage({ params }: PageProps) {
   const { token } = await params;
+  const adminSupabase = await createAdminClient();
   const supabase = await createClient();
 
   // Fetch confession by token
-  const { data: confession, error } = await supabase
+  const { data: confession, error } = await adminSupabase
     .from("confessions")
     .select("*")
     .eq("link_token", token)
@@ -42,17 +43,23 @@ export default async function ConfessionPage({ params }: PageProps) {
 
   // Mark as opened if not already
   if (!confession.is_opened) {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     // Only mark as opened if the person opening it is NOT the creator
     if (!user || user.id !== confession.sender_id) {
-      await supabase
+      const { error: markOpenedError } = await adminSupabase
         .from("confessions")
         .update({
           is_opened: true,
           opened_at: new Date().toISOString(),
         })
         .eq("id", confession.id);
+
+      if (markOpenedError) {
+        console.error("Failed to mark confession as opened:", markOpenedError);
+      }
     }
   }
 
