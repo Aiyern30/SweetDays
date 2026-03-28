@@ -15,6 +15,14 @@ import {
   Copy,
   Share2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AnimatedEnvelope as AnimatedEnvelope1 } from "@/components/AnimatedEnvelope/AnimatedEnvelope";
 import { AnimatedEnvelope as AnimatedEnvelope2 } from "@/components/AnimatedEnvelope/AnimatedEnvelope2";
 import { AnimatedEnvelope as AnimatedEnvelope3 } from "@/components/AnimatedEnvelope/AnimatedEnvelope3";
@@ -91,6 +99,8 @@ type Theme = "Life" | "Fall" | "Christmas" | "Birthday";
 type EnvelopeStyle = "Vintage" | "Romantic" | "Midnight" | "Modern" | "Neon";
 
 type AnimationVariant = "Classic" | "Wax Seal" | "Elegant" | "Dramatic";
+
+const DATEPICKER_IGNORE_OUTSIDE_CLASS = "datepicker-ignore-outside-click";
 
 interface EnvelopeOption {
   id: EnvelopeStyle;
@@ -251,6 +261,50 @@ export default function CondolenceForm() {
         "bg-zinc-950 border border-cyan-500/50 shadow-[0_0_15px_rgba(0,255,255,0.3)]",
     },
   ];
+
+  const years = Array.from(
+    { length: 100 },
+    (_, i) => new Date().getFullYear() - 80 + i,
+  );
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const formatDateToYmd = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const buildSafeDate = (baseDate: Date, month: number, year: number) => {
+    const day = baseDate.getDate();
+    const maxDayInTargetMonth = new Date(year, month + 1, 0).getDate();
+    return new Date(year, month, Math.min(day, maxDayInTargetMonth));
+  };
+
+  const updateCategoryItemDate = (
+    catIndex: number,
+    itemIndex: number,
+    date: Date | null,
+  ) => {
+    const newCategories = [...formData.categories];
+    newCategories[catIndex].items[itemIndex].date = date
+      ? formatDateToYmd(date)
+      : "";
+    updateFormData("categories", newCategories);
+  };
 
   // Validation Functions
   const validateEmail = (email: string): boolean => {
@@ -1556,38 +1610,149 @@ export default function CondolenceForm() {
                                               ? new Date(item.date)
                                               : null
                                           }
-                                          onChange={(date: Date | null) => {
-                                            const newCategories = [
-                                              ...formData.categories,
-                                            ];
-                                            if (date) {
-                                              const year = date.getFullYear();
-                                              const month = String(
-                                                date.getMonth() + 1,
-                                              ).padStart(2, "0");
-                                              const day = String(
-                                                date.getDate(),
-                                              ).padStart(2, "0");
-                                              newCategories[catIndex].items[
-                                                itemIndex
-                                              ].date =
-                                                `${year}-${month}-${day}`;
-                                            } else {
-                                              newCategories[catIndex].items[
-                                                itemIndex
-                                              ].date = "";
-                                            }
-                                            updateFormData(
-                                              "categories",
-                                              newCategories,
-                                            );
-                                          }}
+                                          onChange={(date: Date | null) =>
+                                            updateCategoryItemDate(
+                                              catIndex,
+                                              itemIndex,
+                                              date,
+                                            )
+                                          }
                                           dateFormat="MM/dd/yyyy"
                                           className="w-full bg-white dark:bg-zinc-800 border-2 border-rose-100 dark:border-rose-900/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-rose-500 transition-colors"
                                           calendarClassName="custom-calendar"
+                                          outsideClickIgnoreClass={
+                                            DATEPICKER_IGNORE_OUTSIDE_CLASS
+                                          }
                                           showPopperArrow={false}
                                           popperPlacement="bottom-start"
                                           placeholderText="Select a date"
+                                          renderCustomHeader={({
+                                            date,
+                                            changeYear,
+                                            changeMonth,
+                                            decreaseMonth,
+                                            increaseMonth,
+                                            prevMonthButtonDisabled,
+                                            nextMonthButtonDisabled,
+                                          }) => (
+                                            <div className="flex items-center justify-between px-2 py-2 gap-2">
+                                              <Button
+                                                type="button"
+                                                onClick={decreaseMonth}
+                                                disabled={prevMonthButtonDisabled}
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 rounded-full"
+                                              >
+                                                <ChevronLeft className="h-4 w-4" />
+                                              </Button>
+
+                                              <div className="flex gap-1">
+                                                <Select
+                                                  value={date
+                                                    .getMonth()
+                                                    .toString()}
+                                                  onValueChange={(val) => {
+                                                    const month = Number(val);
+                                                    changeMonth(month);
+                                                    const baseDate = item.date
+                                                      ? new Date(item.date)
+                                                      : date;
+                                                    updateCategoryItemDate(
+                                                      catIndex,
+                                                      itemIndex,
+                                                      buildSafeDate(
+                                                        baseDate,
+                                                        month,
+                                                        date.getFullYear(),
+                                                      ),
+                                                    );
+                                                  }}
+                                                >
+                                                  <SelectTrigger className="h-8 w-25 px-2.5 py-0 text-xs font-bold rounded-lg border-rose-100">
+                                                    <SelectValue />
+                                                  </SelectTrigger>
+                                                  <SelectContent
+                                                    className={`rounded-xl ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
+                                                  >
+                                                    {months.map(
+                                                      (month, index) => (
+                                                        <SelectItem
+                                                          key={month}
+                                                          value={index.toString()}
+                                                          className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
+                                                        >
+                                                          <span
+                                                            className={
+                                                              DATEPICKER_IGNORE_OUTSIDE_CLASS
+                                                            }
+                                                          >
+                                                            {month}
+                                                          </span>
+                                                        </SelectItem>
+                                                      ),
+                                                    )}
+                                                  </SelectContent>
+                                                </Select>
+
+                                                <Select
+                                                  value={date
+                                                    .getFullYear()
+                                                    .toString()}
+                                                  onValueChange={(val) => {
+                                                    const year = Number(val);
+                                                    changeYear(year);
+                                                    const baseDate = item.date
+                                                      ? new Date(item.date)
+                                                      : date;
+                                                    updateCategoryItemDate(
+                                                      catIndex,
+                                                      itemIndex,
+                                                      buildSafeDate(
+                                                        baseDate,
+                                                        date.getMonth(),
+                                                        year,
+                                                      ),
+                                                    );
+                                                  }}
+                                                >
+                                                  <SelectTrigger className="h-8 w-20 px-2.5 py-0 text-xs font-bold rounded-lg border-rose-100">
+                                                    <SelectValue />
+                                                  </SelectTrigger>
+                                                  <SelectContent
+                                                    className={`rounded-xl ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
+                                                  >
+                                                    {years.map((year) => (
+                                                      <SelectItem
+                                                        key={year}
+                                                        value={year.toString()}
+                                                        className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
+                                                      >
+                                                        <span
+                                                          className={
+                                                            DATEPICKER_IGNORE_OUTSIDE_CLASS
+                                                          }
+                                                        >
+                                                          {year}
+                                                        </span>
+                                                      </SelectItem>
+                                                    ))}
+                                                  </SelectContent>
+                                                </Select>
+                                              </div>
+
+                                              <Button
+                                                type="button"
+                                                onClick={increaseMonth}
+                                                disabled={nextMonthButtonDisabled}
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 rounded-full"
+                                              >
+                                                <ChevronRight className="h-4 w-4" />
+                                              </Button>
+                                            </div>
+                                          )}
                                         />
                                       </div>
                                     ) : (
