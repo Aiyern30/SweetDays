@@ -1395,21 +1395,23 @@ const EditConfessionPage = () => {
                                                 <SelectContent
                                                   className={`rounded-xl ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                                 >
-                                                  {months.map((month, index) => (
-                                                    <SelectItem
-                                                      key={month}
-                                                      value={index.toString()}
-                                                      className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
-                                                    >
-                                                      <span
-                                                        className={
-                                                          DATEPICKER_IGNORE_OUTSIDE_CLASS
-                                                        }
+                                                  {months.map(
+                                                    (month, index) => (
+                                                      <SelectItem
+                                                        key={month}
+                                                        value={index.toString()}
+                                                        className={`text-xs ${DATEPICKER_IGNORE_OUTSIDE_CLASS}`}
                                                       >
-                                                        {month}
-                                                      </span>
-                                                    </SelectItem>
-                                                  ))}
+                                                        <span
+                                                          className={
+                                                            DATEPICKER_IGNORE_OUTSIDE_CLASS
+                                                          }
+                                                        >
+                                                          {month}
+                                                        </span>
+                                                      </SelectItem>
+                                                    ),
+                                                  )}
                                                 </SelectContent>
                                               </Select>
 

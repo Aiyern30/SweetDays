@@ -1639,7 +1639,9 @@ export default function CondolenceForm() {
                                               <Button
                                                 type="button"
                                                 onClick={decreaseMonth}
-                                                disabled={prevMonthButtonDisabled}
+                                                disabled={
+                                                  prevMonthButtonDisabled
+                                                }
                                                 variant="ghost"
                                                 size="icon"
                                                 className="h-8 w-8 rounded-full"
@@ -1744,7 +1746,9 @@ export default function CondolenceForm() {
                                               <Button
                                                 type="button"
                                                 onClick={increaseMonth}
-                                                disabled={nextMonthButtonDisabled}
+                                                disabled={
+                                                  nextMonthButtonDisabled
+                                                }
                                                 variant="ghost"
                                                 size="icon"
                                                 className="h-8 w-8 rounded-full"
